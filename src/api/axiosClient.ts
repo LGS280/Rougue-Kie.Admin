@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosClient = axios.create({
-  baseURL: 'https://localhost:7084/api', // HTTPS port from Rogue-Kie.BE
+  baseURL: 'http://localhost:5291/api', // HTTP port from Rogue-Kie.BE
   headers: {
     'Content-Type': 'application/json',
   },

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { NavLink, Outlet } from 'react-router-dom';
 import { LayoutDashboard, Swords, Target, Settings, Zap } from 'lucide-react';
 
@@ -7,6 +7,7 @@ const AdminLayout = () => {
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/' },
     { name: 'Enemies', icon: <Target size={20} />, path: '/enemies' },
     { name: 'Weapons', icon: <Swords size={20} />, path: '/weapons' },
+    { name: 'Bullets', icon: <Target size={20} />, path: '/bullets' },
     { name: 'Levels', icon: <Settings size={20} />, path: '/levels' },
     { name: 'Buffs', icon: <Zap size={20} />, path: '/buffs' },
   ];

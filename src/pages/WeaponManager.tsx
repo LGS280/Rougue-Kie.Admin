@@ -4,26 +4,37 @@ import axiosClient from '../api/axiosClient';
 
 const WeaponManager = () => {
   const [data, setData] = useState([]);
+  const [bullets, setBullets] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
   
   const [formData, setFormData] = useState({
     weaponName: '',
-    damage: 20,
-    fireRate: 0.5
+    fireRate: 0.5,
+    manaCost: 10,
+    bulletsPerShot: 1,
+    spreadAngle: 0.0,
+    bulletId: 1
   });
 
   const columns = [
     { key: 'id', label: 'ID' },
     { key: 'weaponName', label: 'Weapon Name' },
-    { key: 'damage', label: 'Damage' },
-    { key: 'fireRate', label: 'Fire Rate (s)' }
+    { key: 'fireRate', label: 'Fire Rate (s)' },
+    { key: 'manaCost', label: 'Mana Cost' },
+    { key: 'bulletsPerShot', label: 'Bullets / Shot' },
+    { key: 'spreadAngle', label: 'Spread Angle' },
+    { key: 'bulletId', label: 'Bullet ID' }
   ];
 
   const loadData = async () => {
     try {
-      const res = await axiosClient.get('/weapons');
-      setData(res as any);
+      const [weaponsRes, bulletsRes] = await Promise.all([
+        axiosClient.get('/weapons'),
+        axiosClient.get('/bullets')
+      ]);
+      setData(weaponsRes as any);
+      setBullets(bulletsRes as any);
     } catch (e) {
       console.error(e);
     }
@@ -37,8 +48,11 @@ const WeaponManager = () => {
     setEditingItem(null);
     setFormData({
       weaponName: '',
-      damage: 20,
-      fireRate: 0.5
+      fireRate: 0.5,
+      manaCost: 10,
+      bulletsPerShot: 1,
+      spreadAngle: 0.0,
+      bulletId: bullets.length > 0 ? (bullets[0] as any).id : 1
     });
     setModalOpen(true);
   };
@@ -47,8 +61,11 @@ const WeaponManager = () => {
     setEditingItem(item);
     setFormData({
       weaponName: item.weaponName,
-      damage: item.damage,
-      fireRate: item.fireRate
+      fireRate: item.fireRate,
+      manaCost: item.manaCost,
+      bulletsPerShot: item.bulletsPerShot,
+      spreadAngle: item.spreadAngle,
+      bulletId: item.bulletId
     });
     setModalOpen(true);
   };
@@ -79,7 +96,7 @@ const WeaponManager = () => {
     <>
       <DataTable 
         title="Weapon Arsenal" 
-        description="Balance gun and melee weapon damage, fire rate, and reload times."
+        description="Balance gun and melee weapon fire rate, mana cost, and bullet configurations."
         columns={columns}
         data={data}
         onAdd={handleAdd}
@@ -100,13 +117,29 @@ const WeaponManager = () => {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Damage</label>
-                  <input required type="number" value={formData.damage} onChange={e => setFormData({...formData, damage: parseInt(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
-                </div>
-                <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">Fire Rate (sec)</label>
                   <input required type="number" step="0.1" value={formData.fireRate} onChange={e => setFormData({...formData, fireRate: parseFloat(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
                 </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Mana Cost</label>
+                  <input required type="number" value={formData.manaCost} onChange={e => setFormData({...formData, manaCost: parseInt(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Bullets Per Shot</label>
+                  <input required type="number" value={formData.bulletsPerShot} onChange={e => setFormData({...formData, bulletsPerShot: parseInt(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Spread Angle</label>
+                  <input required type="number" step="0.1" value={formData.spreadAngle} onChange={e => setFormData({...formData, spreadAngle: parseFloat(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-400 mb-1">Bullet Type</label>
+                <select required value={formData.bulletId} onChange={e => setFormData({...formData, bulletId: parseInt(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500">
+                  {bullets.map((b: any) => (
+                    <option key={b.id} value={b.id}>{b.bulletName} (ID: {b.id})</option>
+                  ))}
+                </select>
               </div>
               <div className="flex justify-end gap-3 mt-8">
                 <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 text-gray-400 hover:text-white transition-colors">Cancel</button>

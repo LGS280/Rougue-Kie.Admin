@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axiosClient from '../api/axiosClient';
 import { Target, Swords, Settings, Zap, ArrowUpRight } from 'lucide-react';
 
@@ -29,6 +29,7 @@ const Dashboard = () => {
   const [stats, setStats] = useState({
     enemies: 0,
     weapons: 0,
+    bullets: 0,
     levels: 0,
     buffs: 0,
   });
@@ -36,18 +37,20 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [enemies, weapons, levels, buffs] = await Promise.all([
+        const [enemies, weapons, bullets, levels, buffs] = await Promise.all([
           axiosClient.get('/enemies'),
           axiosClient.get('/weapons'),
+          axiosClient.get('/bullets'),
           axiosClient.get('/levels'),
           axiosClient.get('/buffs'),
         ]);
         
         setStats({
-          enemies: enemies.length || 0,
-          weapons: weapons.length || 0,
-          levels: levels.length || 0,
-          buffs: buffs.length || 0,
+          enemies: (enemies as any).length || 0,
+          weapons: (weapons as any).length || 0,
+          bullets: (bullets as any).length || 0,
+          levels: (levels as any).length || 0,
+          buffs: (buffs as any).length || 0,
         });
       } catch (error) {
         console.error("Failed to fetch stats", error);
@@ -63,9 +66,10 @@ const Dashboard = () => {
         <p className="text-gray-400">Welcome to the Rogue-Kie Control Center. Monitor and adjust game configurations here.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-6">
         <StatCard title="Total Enemies" value={stats.enemies} icon={<Target size={24} />} color="#ef4444" />
-        <StatCard title="Weapons Configured" value={stats.weapons} icon={<Swords size={24} />} color="#3b82f6" />
+        <StatCard title="Weapons" value={stats.weapons} icon={<Swords size={24} />} color="#3b82f6" />
+        <StatCard title="Bullets" value={stats.bullets} icon={<Target size={24} />} color="#f97316" />
         <StatCard title="Levels Defined" value={stats.levels} icon={<Settings size={24} />} color="#8b5cf6" />
         <StatCard title="Active Buffs" value={stats.buffs} icon={<Zap size={24} />} color="#eab308" />
       </div>
