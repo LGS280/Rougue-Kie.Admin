@@ -29,7 +29,7 @@ const EnemyManager = () => {
 
   const loadData = async () => {
     try {
-      const res = await axiosClient.get('/gameconfigs/enemies');
+      const res = await axiosClient.get('/enemies');
       setData(res as any);
     } catch (e) {
       console.error(e);
@@ -68,7 +68,7 @@ const EnemyManager = () => {
 
   const handleDelete = async (id: number) => {
     if(confirm("Are you sure you want to delete this enemy?")) {
-      await axiosClient.delete(`/gameconfigs/enemies/${id}`);
+      await axiosClient.delete(`/enemies/${id}`);
       loadData();
     }
   };
@@ -77,9 +77,9 @@ const EnemyManager = () => {
     e.preventDefault();
     try {
       if (editingItem) {
-        await axiosClient.put(`/gameconfigs/enemies/${editingItem.id}`, { ...formData, id: editingItem.id });
+        await axiosClient.put(`/enemies/${editingItem.id}`, { ...formData, id: editingItem.id });
       } else {
-        await axiosClient.post('/gameconfigs/enemies', formData);
+        await axiosClient.post('/enemies', formData);
       }
       setModalOpen(false);
       loadData();

@@ -37,10 +37,10 @@ const Dashboard = () => {
     const fetchStats = async () => {
       try {
         const [enemies, weapons, levels, buffs] = await Promise.all([
-          axiosClient.get('/gameconfigs/enemies'),
-          axiosClient.get('/gameconfigs/weapons'),
-          axiosClient.get('/gameconfigs/levels'),
-          axiosClient.get('/gameconfigs/buffs'),
+          axiosClient.get('/enemies'),
+          axiosClient.get('/weapons'),
+          axiosClient.get('/levels'),
+          axiosClient.get('/buffs'),
         ]);
         
         setStats({

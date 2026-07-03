@@ -22,7 +22,7 @@ const LevelManager = () => {
 
   const loadData = async () => {
     try {
-      const res = await axiosClient.get('/gameconfigs/levels');
+      const res = await axiosClient.get('/levels');
       setData(res as any);
     } catch (e) {
       console.error(e);
@@ -55,7 +55,7 @@ const LevelManager = () => {
 
   const handleDelete = async (id: number) => {
     if(confirm("Delete this level?")) {
-      await axiosClient.delete(`/gameconfigs/levels/${id}`);
+      await axiosClient.delete(`/levels/${id}`);
       loadData();
     }
   };
@@ -64,9 +64,9 @@ const LevelManager = () => {
     e.preventDefault();
     try {
       if (editingItem) {
-        await axiosClient.put(`/gameconfigs/levels/${editingItem.id}`, { ...formData, id: editingItem.id });
+        await axiosClient.put(`/levels/${editingItem.id}`, { ...formData, id: editingItem.id });
       } else {
-        await axiosClient.post('/gameconfigs/levels', formData);
+        await axiosClient.post('/levels', formData);
       }
       setModalOpen(false);
       loadData();

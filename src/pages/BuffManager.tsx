@@ -26,7 +26,7 @@ const BuffManager = () => {
 
   const loadData = async () => {
     try {
-      const res = await axiosClient.get('/gameconfigs/buffs');
+      const res = await axiosClient.get('/buffs');
       setData(res as any);
     } catch (e) {
       console.error(e);
@@ -65,7 +65,7 @@ const BuffManager = () => {
 
   const handleDelete = async (id: number) => {
     if(confirm("Delete this buff?")) {
-      await axiosClient.delete(`/gameconfigs/buffs/${id}`);
+      await axiosClient.delete(`/buffs/${id}`);
       loadData();
     }
   };
@@ -74,9 +74,9 @@ const BuffManager = () => {
     e.preventDefault();
     try {
       if (editingItem) {
-        await axiosClient.put(`/gameconfigs/buffs/${editingItem.id}`, { ...formData, id: editingItem.id });
+        await axiosClient.put(`/buffs/${editingItem.id}`, { ...formData, id: editingItem.id });
       } else {
-        await axiosClient.post('/gameconfigs/buffs', formData);
+        await axiosClient.post('/buffs', formData);
       }
       setModalOpen(false);
       loadData();
