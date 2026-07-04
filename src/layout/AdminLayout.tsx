@@ -1,8 +1,11 @@
 
 import { NavLink, Outlet } from 'react-router-dom';
-import { LayoutDashboard, Swords, Target, Settings, Zap } from 'lucide-react';
+import { LayoutDashboard, Swords, Target, Settings, Zap, LogOut } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const AdminLayout = () => {
+  const { username, role, logout } = useAuth();
+  
   const menuItems = [
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/' },
     { name: 'Enemies', icon: <Target size={20} />, path: '/enemies' },
@@ -55,8 +58,21 @@ const AdminLayout = () => {
         <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-[100px] pointer-events-none"></div>
         <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px] pointer-events-none"></div>
 
-        <header className="h-16 flex items-center px-8 border-b border-gray-800/50 backdrop-blur-sm z-10">
+        <header className="h-16 flex items-center justify-between px-8 border-b border-gray-800/50 backdrop-blur-sm z-10">
           <h2 className="text-sm font-medium text-gray-400 uppercase tracking-widest">Control Center</h2>
+          <div className="flex items-center gap-4">
+            <div className="text-right">
+              <div className="text-sm font-medium text-gray-200">{username}</div>
+              <div className="text-xs text-gray-500">{role}</div>
+            </div>
+            <button
+              onClick={logout}
+              className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+              title="Đăng xuất"
+            >
+              <LogOut size={18} />
+            </button>
+          </div>
         </header>
 
         <div className="flex-1 overflow-auto p-8 z-10 relative">

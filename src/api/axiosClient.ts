@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosClient = axios.create({
-  baseURL: 'http://localhost:5291/api', // HTTP port from Rogue-Kie.BE
+  baseURL: 'https://localhost:7075/api', // HTTPS port from Rogue-Kie.BE
   headers: {
     'Content-Type': 'application/json',
   },
@@ -21,6 +21,13 @@ axiosClient.interceptors.response.use(
     return response.data;
   },
   (error) => {
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      // Clear local storage and redirect to login
+      localStorage.removeItem('token');
+      localStorage.removeItem('username');
+      localStorage.removeItem('role');
+      window.location.href = '/login';
+    }
     return Promise.reject(error);
   }
 );
