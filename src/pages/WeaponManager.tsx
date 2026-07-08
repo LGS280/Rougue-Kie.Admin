@@ -107,7 +107,7 @@ const WeaponManager = () => {
     e.preventDefault();
     try {
       if (editingItem) {
-        await axiosClient.put(`/weapons/${editingItem.id}`, { ...formData, id: editingItem.id });
+        await axiosClient.put(`/weapons/${editingItem.id}`, formData);
       } else {
         await axiosClient.post('/weapons', formData);
       }

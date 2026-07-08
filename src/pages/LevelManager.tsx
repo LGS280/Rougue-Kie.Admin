@@ -64,7 +64,7 @@ const LevelManager = () => {
     e.preventDefault();
     try {
       if (editingItem) {
-        await axiosClient.put(`/levels/${editingItem.id}`, { ...formData, id: editingItem.id });
+        await axiosClient.put(`/levels/${editingItem.id}`, formData);
       } else {
         await axiosClient.post('/levels', formData);
       }
