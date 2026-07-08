@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from '../components/DataTable';
 import axiosClient from '../api/axiosClient';
+import { useAuth } from '../context/AuthContext';
 
 const WeaponManager = () => {
+  const { isAuthenticated, role } = useAuth();
+  const isWritable = isAuthenticated && (role === 'Admin' || role === 'Developer');
+
   const [data, setData] = useState([]);
   const [bullets, setBullets] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -29,10 +33,10 @@ const WeaponManager = () => {
   const columns = [
     { key: 'id', label: 'ID' },
     { key: 'weaponName', label: 'Weapon Name' },
-    { key: 'prefabName', label: 'Prefab' },
+    ...(isWritable ? [{ key: 'prefabName', label: 'Prefab' }] : []),
     { key: 'fireRate', label: 'Fire Rate' },
     { key: 'manaCost', label: 'Mana' },
-    { key: 'bulletId', label: 'Bullet ID' }
+    ...(isWritable ? [{ key: 'bulletId', label: 'Bullet ID' }] : []),
   ];
 
   const loadData = async () => {
