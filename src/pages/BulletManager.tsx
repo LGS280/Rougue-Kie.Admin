@@ -77,7 +77,7 @@ const BulletManager = () => {
     e.preventDefault();
     try {
       if (editingItem) {
-        await axiosClient.put(`/bullets/${editingItem.id}`, { ...formData, id: editingItem.id });
+        await axiosClient.put(`/bullets/${editingItem.id}`, formData);
       } else {
         await axiosClient.post('/bullets', formData);
       }

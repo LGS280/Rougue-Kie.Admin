@@ -77,7 +77,7 @@ const EnemyManager = () => {
     e.preventDefault();
     try {
       if (editingItem) {
-        await axiosClient.put(`/enemies/${editingItem.id}`, { ...formData, id: editingItem.id });
+        await axiosClient.put(`/enemies/${editingItem.id}`, formData);
       } else {
         await axiosClient.post('/enemies', formData);
       }
