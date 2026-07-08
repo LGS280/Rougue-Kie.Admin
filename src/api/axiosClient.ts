@@ -1,7 +1,16 @@
 import axios from 'axios';
 
+// Provide a minimal declaration for `process.env` so TypeScript won't error in
+// browser projects that don't have Node types. Use an empty string fallback
+// if BASE_URL is not defined.
+declare const process: {
+  env: {
+    BASE_URL?: string;
+  };
+};
+
 const axiosClient = axios.create({
-  baseURL: 'https://localhost:7075/api', // HTTPS port from Rogue-Kie.BE
+  baseURL: process?.env?.BASE_URL || '', // HTTPS port from Rogue-Kie.BE
   headers: {
     'Content-Type': 'application/json',
   },

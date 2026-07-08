@@ -1,17 +1,21 @@
 import { useEffect, useState } from 'react';
 import axiosClient from '../api/axiosClient';
 import { Target, Swords, Settings, Zap, ArrowUpRight } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
+// Component Thẻ thống kê Glassmorphic cao cấp
 const StatCard = ({ title, value, icon, color }: { title: string, value: number | string, icon: React.ReactNode, color: string }) => (
-  <div className="bg-[#1e1e1e] p-6 rounded-2xl border border-gray-800/50 shadow-lg relative overflow-hidden group hover:border-gray-700 transition-colors duration-300">
-    <div className={`absolute top-0 right-0 w-32 h-32 opacity-10 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-150 duration-500`} style={{ backgroundColor: color }}></div>
+  <div className="glass-panel p-6 rounded-2xl border border-white/[0.04] shadow-lg relative overflow-hidden group hover:-translate-y-1 hover:border-white/[0.08] transition-all duration-300">
+    {/* Vệt sáng màu nền phát sáng mờ ở góc thẻ */}
+    <div className="absolute top-0 right-0 w-32 h-32 opacity-5 rounded-full -mr-12 -mt-12 transition-transform group-hover:scale-150 duration-500 blur-xl" style={{ backgroundColor: color }}></div>
     
     <div className="flex justify-between items-start relative z-10">
       <div>
-        <p className="text-gray-400 text-sm font-medium mb-1">{title}</p>
-        <h3 className="text-4xl font-bold text-white">{value}</h3>
+        <p className="text-gray-400 text-xs font-semibold uppercase tracking-wider mb-1">{title}</p>
+        <h3 className="text-4xl font-bold text-white tracking-tight">{value}</h3>
       </div>
-      <div className={`p-3 rounded-xl`} style={{ backgroundColor: `${color}20`, color: color }}>
+      <div className="p-3 rounded-xl transition-all duration-300 group-hover:scale-110" style={{ backgroundColor: `${color}15`, color: color }}>
         {icon}
       </div>
     </div>
@@ -26,6 +30,12 @@ const StatCard = ({ title, value, icon, color }: { title: string, value: number 
 );
 
 const Dashboard = () => {
+  const { isAuthenticated, role } = useAuth();
+  const navigate = useNavigate();
+  
+  // Kiểm tra quyền chỉnh sửa của user để hiển thị Quick Actions
+  const isWritable = isAuthenticated && (role === 'Admin' || role === 'Developer');
+
   const [stats, setStats] = useState({
     enemies: 0,
     weapons: 0,
@@ -63,41 +73,60 @@ const Dashboard = () => {
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-white mb-2">Dashboard Overview</h1>
-        <p className="text-gray-400">Welcome to the Rogue-Kie Control Center. Monitor and adjust game configurations here.</p>
+        <p className="text-gray-400 text-sm">Welcome to the Rogue-Kie Control Center. Monitor and adjust game configurations here.</p>
       </div>
 
+      {/* Grid thẻ chỉ số */}
       <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-6">
-        <StatCard title="Total Enemies" value={stats.enemies} icon={<Target size={24} />} color="#ef4444" />
-        <StatCard title="Weapons" value={stats.weapons} icon={<Swords size={24} />} color="#3b82f6" />
-        <StatCard title="Bullets" value={stats.bullets} icon={<Target size={24} />} color="#f97316" />
-        <StatCard title="Levels Defined" value={stats.levels} icon={<Settings size={24} />} color="#8b5cf6" />
-        <StatCard title="Active Buffs" value={stats.buffs} icon={<Zap size={24} />} color="#eab308" />
+        <StatCard title="Total Enemies" value={stats.enemies} icon={<Target size={22} />} color="#f43f5e" />
+        <StatCard title="Weapons" value={stats.weapons} icon={<Swords size={22} />} color="#6366f1" />
+        <StatCard title="Bullets" value={stats.bullets} icon={<Target size={22} />} color="#f97316" />
+        <StatCard title="Levels Defined" value={stats.levels} icon={<Settings size={22} />} color="#a855f7" />
+        <StatCard title="Active Buffs" value={stats.buffs} icon={<Zap size={22} />} color="#eab308" />
       </div>
 
       <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-[#1e1e1e] p-6 rounded-2xl border border-gray-800/50 shadow-lg">
-           <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
-           <div className="grid grid-cols-2 gap-4">
-              <button className="p-4 bg-gray-800/50 hover:bg-gray-800 rounded-xl text-left transition-colors border border-gray-700/50">
-                <Target className="text-red-400 mb-2" />
-                <div className="font-medium text-gray-200">New Enemy</div>
-                <div className="text-xs text-gray-500 mt-1">Add a new enemy type</div>
-              </button>
-              <button className="p-4 bg-gray-800/50 hover:bg-gray-800 rounded-xl text-left transition-colors border border-gray-700/50">
-                <Swords className="text-blue-400 mb-2" />
-                <div className="font-medium text-gray-200">New Weapon</div>
-                <div className="text-xs text-gray-500 mt-1">Configure gun stats</div>
-              </button>
-           </div>
-        </div>
+        {/* Quick Actions - Chỉ hiển thị cho Admin/Developer */}
+        {isWritable ? (
+          <div className="glass-panel p-6 rounded-2xl border border-white/[0.04]">
+             <h3 className="text-lg font-bold text-white mb-4">Quick Actions</h3>
+             <div className="grid grid-cols-2 gap-4">
+                <button 
+                  onClick={() => navigate('/enemies')}
+                  className="p-4 bg-white/[0.02] hover:bg-white/[0.04] rounded-xl text-left transition-all border border-white/[0.04] hover:border-white/[0.08] cursor-pointer group active:scale-98"
+                >
+                  <Target className="text-red-400 mb-2 transition-transform group-hover:scale-110" />
+                  <div className="font-semibold text-gray-200">New Enemy</div>
+                  <div className="text-xs text-gray-500 mt-1">Add a new enemy type to the roster</div>
+                </button>
+                <button 
+                  onClick={() => navigate('/weapons')}
+                  className="p-4 bg-white/[0.02] hover:bg-white/[0.04] rounded-xl text-left transition-all border border-white/[0.04] hover:border-white/[0.08] cursor-pointer group active:scale-98"
+                >
+                  <Swords className="text-indigo-400 mb-2 transition-transform group-hover:scale-110" />
+                  <div className="font-semibold text-gray-200">New Weapon</div>
+                  <div className="text-xs text-gray-500 mt-1">Configure gun stats and behaviors</div>
+                </button>
+             </div>
+          </div>
+        ) : (
+          /* Lời chào hoặc hướng dẫn dành cho Player */
+          <div className="glass-panel p-6 rounded-2xl border border-white/[0.04] flex flex-col justify-center">
+             <h3 className="text-lg font-bold text-white mb-2">Read-Only mode active</h3>
+             <p className="text-gray-400 text-sm leading-relaxed">
+               You are currently viewing the configurations in **Player mode**. You can browse and check all weapon, enemy, and buff parameters, but modification requires an authorized Admin or Developer account.
+             </p>
+          </div>
+        )}
 
-        <div className="bg-gradient-to-br from-blue-900/40 to-purple-900/40 p-6 rounded-2xl border border-blue-800/30 shadow-lg flex flex-col justify-center items-center text-center">
-           <div className="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center mb-4">
-              <Zap className="text-blue-400" size={32} />
+        {/* Hệ thống trạng thái */}
+        <div className="bg-gradient-to-br from-indigo-950/20 to-cyan-950/20 p-6 rounded-2xl border border-indigo-500/10 shadow-lg flex flex-col justify-center items-center text-center">
+           <div className="w-14 h-14 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-4">
+              <Zap className="text-indigo-400" size={28} />
            </div>
            <h3 className="text-xl font-bold text-white mb-2">System Status: Online</h3>
-           <p className="text-blue-200/70 text-sm max-w-sm">
-             The Web Admin panel is directly connected to the Backend Database. Changes made here will reflect in-game instantly via Sync API.
+           <p className="text-indigo-200/50 text-sm max-w-sm">
+             The Web Admin panel is directly connected to the Backend Database. Changes made by admins will reflect in-game instantly via Sync API.
            </p>
         </div>
       </div>

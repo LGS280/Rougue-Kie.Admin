@@ -1,5 +1,5 @@
 
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AdminLayout from './layout/AdminLayout';
 import Dashboard from './pages/Dashboard';
 import EnemyManager from './pages/EnemyManager';
@@ -8,21 +8,8 @@ import LevelManager from './pages/LevelManager';
 import BuffManager from './pages/BuffManager';
 import BulletManager from './pages/BulletManager';
 import Login from './pages/Login';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext';
 
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, role } = useAuth();
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  if (role !== 'Admin' && role !== 'Developer') {
-    return <Navigate to="/login" replace />;
-  }
-
-  return <>{children}</>;
-};
 
 function App() {
   return (
@@ -30,7 +17,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
+          <Route path="/" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
             <Route path="enemies" element={<EnemyManager />} />
             <Route path="weapons" element={<WeaponManager />} />
