@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from '../components/DataTable';
 import axiosClient from '../api/axiosClient';
+import { useAuth } from '../context/AuthContext';
 
 const BulletManager = () => {
+  const { isAuthenticated, role } = useAuth();
+  const isWritable = isAuthenticated && (role === 'Admin' || role === 'Developer');
+
   const [data, setData] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
@@ -24,7 +28,7 @@ const BulletManager = () => {
     { key: 'critRate', label: 'Crit Rate' },
     { key: 'flightSpeed', label: 'Flight SPD' },
     { key: 'piercingCount', label: 'Piercing' },
-    { key: 'prefabName', label: 'Prefab' },
+    ...(isWritable ? [{ key: 'prefabName', label: 'Prefab' }] : []),
   ];
 
   const loadData = async () => {

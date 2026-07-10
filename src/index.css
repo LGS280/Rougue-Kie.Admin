@@ -1,26 +1,36 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap');
 
 /* 
-  Hệ thống CSS Gaming Dark Theme & Glassmorphism cho Rogue-Kie
+  Hệ thống CSS Gaming Dark Theme & Glassmorphism cho Rogue-Kie - Redesigned by UI-UX-Pro-Max
   Tập trung tối ưu giao diện điều khiển (Control Center) và bảng số liệu của Game.
 */
 
 @theme {
-  --font-sans: 'Outfit', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Fira Sans', sans-serif;
+  --font-mono: 'Fira Code', monospace;
 }
 
 :root {
-  --bg-primary: #0a0b0d;
-  --bg-secondary: #12141c;
-  --bg-card: rgba(22, 25, 34, 0.7);
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-glow: rgba(99, 102, 241, 0.2);
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --accent-purple: #818cf8;
-  --accent-cyan: #22d3ee;
+  --bg-primary: #0F0F23;
+  --bg-secondary: #161633;
+  --bg-card: rgba(39, 39, 59, 0.6);
+  --border-color: rgba(76, 29, 149, 0.4);
+  --border-glow: rgba(124, 58, 237, 0.35);
+  --text-primary: #E2E8F0;
+  --text-secondary: #94A3B8;
+  --accent-purple: #7C3AED;
+  --accent-rose: #F43F5E;
   
+  --color-primary: #7C3AED;
+  --color-secondary: #A78BFA;
+  --color-accent: #F43F5E;
+  --color-background: #0F0F23;
+  --color-foreground: #E2E8F0;
+  --color-muted: #27273B;
+  --color-border: #4C1D95;
+  --color-destructive: #EF4444;
+
   font-family: var(--font-sans);
   color-scheme: dark;
 }
@@ -34,21 +44,21 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Glassmorphism panel */
+/* Glassmorphism panel - Space Hangar Style */
 .glass-panel {
   background: var(--bg-card);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
   border: 1px solid var(--border-color);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-panel:hover {
-  border-color: rgba(99, 102, 241, 0.25);
-  box-shadow: 0 8px 32px 0 rgba(99, 102, 241, 0.05);
+  border-color: rgba(124, 58, 237, 0.5);
+  box-shadow: 0 0 25px rgba(124, 58, 237, 0.18);
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Space Station Sleek */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -57,11 +67,12 @@ body {
   background: var(--bg-primary);
 }
 ::-webkit-scrollbar-thumb {
-  background: #222530;
-  border-radius: 3px;
+  background: #1c1c44;
+  border-radius: 99px;
+  border: 1px solid var(--border-color);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #313545;
+  background: var(--accent-purple);
 }
 
 /* Input, select, textarea styling */
@@ -69,12 +80,12 @@ input[type="text"],
 input[type="number"],
 select,
 textarea {
-  background-color: rgba(10, 11, 14, 0.8) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background-color: rgba(15, 15, 35, 0.85) !important;
+  border: 1px solid rgba(124, 58, 237, 0.2) !important;
   border-radius: 12px !important;
   padding: 10px 16px !important;
   color: #fff !important;
-  transition: all 0.2s ease-in-out !important;
+  transition: all 0.25s ease-in-out !important;
   font-family: var(--font-sans) !important;
 }
 
@@ -83,7 +94,7 @@ input[type="number"]:focus,
 select:focus,
 textarea:focus {
   border-color: var(--accent-purple) !important;
-  box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.2) !important;
+  box-shadow: 0 0 15px rgba(124, 58, 237, 0.35) !important;
   outline: none !important;
 }
 
@@ -91,3 +102,72 @@ textarea:focus {
 tr {
   transition: all 0.2s ease;
 }
+
+/* Space Grid Pattern */
+.space-grid {
+  background-color: #0F0F23;
+  background-image: 
+    linear-gradient(rgba(124, 58, 237, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.03) 1px, transparent 1px);
+  background-size: 30px 30px;
+  background-position: center;
+}
+
+/* Pulsating server beacon */
+@keyframes beacon-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+.beacon-pulse {
+  animation: beacon-pulse 2s infinite;
+}
+
+/* CRT Screen Glow and Scanline Effects */
+.crt-screen {
+  position: relative;
+  overflow: hidden;
+  background-color: #0b0f19;
+}
+
+.crt-screen::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 2;
+  background-size: 100% 4px, 6px 100%;
+  pointer-events: none;
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.crt-scanline::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: rgba(18, 16, 16, 0.1);
+  opacity: 0;
+  z-index: 2;
+  pointer-events: none;
+  animation: scanline 6s linear infinite;
+  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(124, 58, 237, 0.08) 10%, rgba(255,255,255,0) 11%);
+}
+
+
