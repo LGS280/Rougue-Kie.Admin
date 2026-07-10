@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { LayoutDashboard, Swords, Target, Settings, Zap, LogOut } from 'lucide-react';
+import { LayoutDashboard, Swords, Target, Settings, Zap, LogOut, User, Sparkles, ShoppingBag } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const AdminLayout = () => {
@@ -8,6 +8,9 @@ const AdminLayout = () => {
   
   const menuItems = [
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/' },
+    { name: 'Characters', icon: <User size={20} />, path: '/characters' },
+    { name: 'Cosmetics', icon: <Sparkles size={20} />, path: '/cosmetics' },
+    { name: 'Shop Items', icon: <ShoppingBag size={20} />, path: '/shop-items' },
     { name: 'Enemies', icon: <Target size={20} />, path: '/enemies' },
     { name: 'Weapons', icon: <Swords size={20} />, path: '/weapons' },
     { name: 'Bullets', icon: <Target size={20} />, path: '/bullets' },
