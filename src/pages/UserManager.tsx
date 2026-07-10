@@ -38,8 +38,26 @@ const UserManager = () => {
   };
 
   useEffect(() => {
-    fetchUsersAndRoles();
-  }, []);
+    if (isWritable) {
+      fetchUsersAndRoles();
+    }
+  }, [isWritable]);
+
+  if (!isWritable) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 animate-in fade-in duration-300 space-y-6">
+        <div className="w-16 h-16 rounded-full bg-[#F43F5E]/10 border border-[#F43F5E]/40 flex items-center justify-center text-[#F43F5E] shadow-lg shadow-[#F43F5E]/10 animate-pulse">
+          <ShieldAlert size={32} />
+        </div>
+        <div className="text-center space-y-2 max-w-md">
+          <h2 className="text-xl font-bold text-[#F43F5E] font-mono tracking-wide">ACCESS DENIED</h2>
+          <p className="text-xs text-gray-400 font-sans leading-relaxed">
+            Your current security credentials do not grant you clearance to view or manage the space station crew directory. Please contact the Station Commander (Admin) to request higher clearance.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();

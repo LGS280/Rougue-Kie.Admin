@@ -9,8 +9,10 @@ const AdminLayout = () => {
   const menuItems = [
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/' },
     { name: 'Mission Control', icon: <Radio size={20} />, path: '/mission-control' },
-    { name: 'Analytics', icon: <BarChart3 size={20} />, path: '/analytics' },
-    { name: 'Crew Members (Users)', icon: <Users2 size={20} />, path: '/users' },
+    ...(role === 'Admin' || role === 'Developer' ? [
+      { name: 'Analytics', icon: <BarChart3 size={20} />, path: '/analytics' },
+      { name: 'Crew Members (Users)', icon: <Users2 size={20} />, path: '/users' }
+    ] : []),
     { name: 'Characters', icon: <User size={20} />, path: '/characters' },
     { name: 'Cosmetics', icon: <Sparkles size={20} />, path: '/cosmetics' },
     { name: 'Shop Items', icon: <ShoppingBag size={20} />, path: '/shop-items' },

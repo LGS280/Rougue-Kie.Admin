@@ -1,4 +1,5 @@
-import { TrendingUp, Users, DollarSign, Wallet, ShieldCheck } from 'lucide-react';
+import { TrendingUp, Users, DollarSign, Wallet, ShieldCheck, ShieldAlert } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const MOCK_TRANSACTIONS = [
   { id: 'TX-9021', user: 'Rookie-09', type: 'Stripe Purchase', amount: '$9.99', asset: '1,000 Ruby', time: '10 mins ago', status: 'SUCCESS' },
@@ -9,6 +10,25 @@ const MOCK_TRANSACTIONS = [
 ];
 
 const Analytics = () => {
+  const { isAuthenticated, role } = useAuth();
+  const isWritable = isAuthenticated && (role === 'Admin' || role === 'Developer');
+
+  if (!isWritable) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 animate-in fade-in duration-300 space-y-6">
+        <div className="w-16 h-16 rounded-full bg-[#F43F5E]/10 border border-[#F43F5E]/40 flex items-center justify-center text-[#F43F5E] shadow-lg shadow-[#F43F5E]/10 animate-pulse">
+          <ShieldAlert size={32} />
+        </div>
+        <div className="text-center space-y-2 max-w-md">
+          <h2 className="text-xl font-bold text-[#F43F5E] font-mono tracking-wide">ACCESS DENIED</h2>
+          <p className="text-xs text-gray-400 font-sans leading-relaxed">
+            Your current security credentials do not grant you clearance to view orbital telemetry or revenue charts. Please contact the Station Commander (Admin) to request higher clearance.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   // SVG Chart 1 Points: Active Players (Mon - Sun)
   // X: 50, 120, 190, 260, 330, 400, 470
   // Y: 150 (Mon: 120), (Tue: 90), (Wed: 130), (Thu: 60), (Fri: 40), (Sat: 20), (Sun: 30)
