@@ -10,6 +10,7 @@ import BulletManager from './pages/BulletManager';
 import CharacterManager from './pages/CharacterManager';
 import CosmeticManager from './pages/CosmeticManager';
 import ShopItemManager from './pages/ShopItemManager';
+import MissionControl from './pages/MissionControl';
 import Login from './pages/Login';
 import { AuthProvider } from './context/AuthContext';
 
@@ -22,6 +23,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<AdminLayout />}>
             <Route index element={<Dashboard />} />
+            <Route path="mission-control" element={<MissionControl />} />
             <Route path="enemies" element={<EnemyManager />} />
             <Route path="weapons" element={<WeaponManager />} />
             <Route path="bullets" element={<BulletManager />} />
