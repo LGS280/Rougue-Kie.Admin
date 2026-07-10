@@ -19,7 +19,7 @@ const AdminLayout = () => {
   ];
 
   return (
-    <div className="flex h-screen bg-[#0F0F23] text-[#E2E8F0] antialiased font-sans">
+    <div className="flex h-screen space-grid text-[#E2E8F0] antialiased font-sans">
       {/* Sidebar - Thiết kế kính mờ tối giản chuẩn UI Pro Max */}
       <aside className="w-64 bg-[#161633]/90 border-r border-[#4C1D95]/40 flex flex-col backdrop-blur-md z-20">
         <div className="p-6 flex items-center gap-3">
@@ -68,14 +68,14 @@ const AdminLayout = () => {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col overflow-hidden relative bg-[#0F0F23]">
+      <main className="flex-1 flex flex-col overflow-hidden relative space-grid">
         {/* Các quả cầu phát sáng mờ (ambient glow blobs) phía nền */}
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-[#7C3AED]/5 rounded-full blur-[120px] pointer-events-none"></div>
         <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-[#F43F5E]/5 rounded-full blur-[120px] pointer-events-none"></div>
 
         {/* Header - Kính mờ đồng bộ */}
         <header className="h-16 flex items-center justify-between px-8 border-b border-[#4C1D95]/30 bg-[#0F0F23]/60 backdrop-blur-md z-10">
-          <h2 className="text-xs font-semibold text-[#A78BFA] uppercase tracking-widest font-mono">Control Center</h2>
+          <h2 className="text-xs font-semibold text-[#A78BFA] uppercase tracking-widest font-mono">Galactic Command Hangar</h2>
           
           <div className="flex items-center gap-4">
             {/* Phân quyền hiển thị nút Đăng nhập / Đăng xuất tùy vào trạng thái xác thực */}

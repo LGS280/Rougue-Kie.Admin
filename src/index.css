@@ -44,21 +44,21 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Glassmorphism panel */
+/* Glassmorphism panel - Space Hangar Style */
 .glass-panel {
   background: var(--bg-card);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
   border: 1px solid var(--border-color);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .glass-panel:hover {
-  border-color: rgba(99, 102, 241, 0.25);
-  box-shadow: 0 8px 32px 0 rgba(99, 102, 241, 0.05);
+  border-color: rgba(124, 58, 237, 0.5);
+  box-shadow: 0 0 25px rgba(124, 58, 237, 0.18);
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Space Station Sleek */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -67,11 +67,12 @@ body {
   background: var(--bg-primary);
 }
 ::-webkit-scrollbar-thumb {
-  background: #222530;
-  border-radius: 3px;
+  background: #1c1c44;
+  border-radius: 99px;
+  border: 1px solid var(--border-color);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #313545;
+  background: var(--accent-purple);
 }
 
 /* Input, select, textarea styling */
@@ -79,12 +80,12 @@ input[type="text"],
 input[type="number"],
 select,
 textarea {
-  background-color: rgba(10, 11, 14, 0.8) !important;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background-color: rgba(15, 15, 35, 0.85) !important;
+  border: 1px solid rgba(124, 58, 237, 0.2) !important;
   border-radius: 12px !important;
   padding: 10px 16px !important;
   color: #fff !important;
-  transition: all 0.2s ease-in-out !important;
+  transition: all 0.25s ease-in-out !important;
   font-family: var(--font-sans) !important;
 }
 
@@ -93,7 +94,7 @@ input[type="number"]:focus,
 select:focus,
 textarea:focus {
   border-color: var(--accent-purple) !important;
-  box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.2) !important;
+  box-shadow: 0 0 15px rgba(124, 58, 237, 0.35) !important;
   outline: none !important;
 }
 
@@ -101,3 +102,71 @@ textarea:focus {
 tr {
   transition: all 0.2s ease;
 }
+
+/* Space Grid Pattern */
+.space-grid {
+  background-color: #0F0F23;
+  background-image: 
+    linear-gradient(rgba(124, 58, 237, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.03) 1px, transparent 1px);
+  background-size: 30px 30px;
+  background-position: center;
+}
+
+/* Pulsating server beacon */
+@keyframes beacon-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+.beacon-pulse {
+  animation: beacon-pulse 2s infinite;
+}
+
+/* CRT Screen Glow and Scanline Effects */
+.crt-screen {
+  position: relative;
+  overflow: hidden;
+  background-color: #0b0f19;
+}
+
+.crt-screen::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 2;
+  background-size: 100% 4px, 6px 100%;
+  pointer-events: none;
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.crt-scanline::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: rgba(18, 16, 16, 0.1);
+  opacity: 0;
+  z-index: 2;
+  pointer-events: none;
+  animation: scanline 6s linear infinite;
+  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(124, 58, 237, 0.08) 10%, rgba(255,255,255,0) 11%);
+}
+
