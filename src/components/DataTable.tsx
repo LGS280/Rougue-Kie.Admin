@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Edit2, Trash2, Plus, Search } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export interface Column<T> {
   key?: string;
@@ -36,6 +37,10 @@ export default function DataTable<T extends { id: any }>({
   addButtonText = 'Add New',
   isWritable = true
 }: DataTableProps<T>) {
+  const { isAuthenticated, role } = useAuth();
+  const userIsWritable = isAuthenticated && (role === 'Admin' || role === 'Developer');
+  const finalIsWritable = isWritable && userIsWritable;
+
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
@@ -82,7 +87,7 @@ export default function DataTable<T extends { id: any }>({
             </div>
           )}
 
-          {isWritable && onAdd && (
+          {finalIsWritable && onAdd && (
             <button
               onClick={onAdd}
               className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-[#7C3AED] to-[#F43F5E] hover:from-[#6D28D9] hover:to-[#E11D48] text-white text-sm font-semibold rounded-xl transition-all shadow-md shadow-[#7C3AED]/20 cursor-pointer active:scale-98"
@@ -104,7 +109,7 @@ export default function DataTable<T extends { id: any }>({
                   {col.header || col.label || ''}
                 </th>
               ))}
-              {(onEdit || onDelete) && (
+              {(onEdit || onDelete) && finalIsWritable && (
                 <th className="px-6 py-4 text-xs font-semibold text-[#A78BFA] uppercase tracking-wider font-mono text-right">
                   Actions
                 </th>
@@ -114,7 +119,7 @@ export default function DataTable<T extends { id: any }>({
           <tbody className="divide-y divide-[#4C1D95]/10">
             {paginatedData.length === 0 ? (
               <tr>
-                <td colSpan={columns.length + ((onEdit || onDelete) ? 1 : 0)} className="px-6 py-8 text-center text-gray-500 font-mono text-sm">
+                <td colSpan={columns.length + ((onEdit || onDelete) && finalIsWritable ? 1 : 0)} className="px-6 py-8 text-center text-gray-500 font-mono text-sm">
                   No records found.
                 </td>
               </tr>
@@ -131,9 +136,9 @@ export default function DataTable<T extends { id: any }>({
                       </td>
                     );
                   })}
-                  {(onEdit || onDelete) && (
+                  {(onEdit || onDelete) && finalIsWritable && (
                     <td className="px-6 py-4 text-sm text-right space-x-2 whitespace-nowrap">
-                      {isWritable && onEdit && (
+                      {onEdit && (
                         <button
                           onClick={() => onEdit(item)}
                           className="p-2 hover:bg-[#7C3AED]/20 text-[#A78BFA] hover:text-[#C084FC] rounded-lg transition-all cursor-pointer inline-flex items-center"
@@ -142,7 +147,7 @@ export default function DataTable<T extends { id: any }>({
                           <Edit2 size={15} />
                         </button>
                       )}
-                      {isWritable && onDelete && (
+                      {onDelete && (
                         <button
                           onClick={() => onDelete(item.id || item)}
                           className="p-2 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 rounded-lg transition-all cursor-pointer inline-flex items-center"
