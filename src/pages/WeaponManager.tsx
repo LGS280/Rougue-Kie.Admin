@@ -27,12 +27,16 @@ const WeaponManager = () => {
     recoilDistance: 0.15,
     recoilDuration: 0.05,
     returnDuration: 0.1,
+    weaponType: 'Rifle',
+    rarity: 'Common',
     bulletId: 1
   });
 
   const columns = [
     { key: 'id', label: 'ID' },
     { key: 'weaponName', label: 'Weapon Name' },
+    { key: 'weaponType', label: 'Type' },
+    { key: 'rarity', label: 'Rarity' },
     ...(isWritable ? [{ key: 'prefabName', label: 'Prefab' }] : []),
     { key: 'fireRate', label: 'Fire Rate' },
     { key: 'manaCost', label: 'Mana' },
@@ -73,6 +77,8 @@ const WeaponManager = () => {
       recoilDistance: 0.15,
       recoilDuration: 0.05,
       returnDuration: 0.1,
+      weaponType: 'Rifle',
+      rarity: 'Common',
       bulletId: bullets.length > 0 ? (bullets[0] as any).id : 1
     });
     setModalOpen(true);
@@ -95,6 +101,8 @@ const WeaponManager = () => {
       recoilDistance: item.recoilDistance ?? 0.15,
       recoilDuration: item.recoilDuration ?? 0.05,
       returnDuration: item.returnDuration ?? 0.1,
+      weaponType: item.weaponType || 'Rifle',
+      rarity: item.rarity || 'Common',
       bulletId: item.bulletId
     });
     setModalOpen(true);
@@ -150,6 +158,30 @@ const WeaponManager = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">Prefab Name</label>
                   <input required type="text" value={formData.prefabName} onChange={e => setFormData({...formData, prefabName: e.target.value})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" placeholder="Weapons/AK47_Prefab" />
+                </div>
+              </div>
+
+              {/* Weapon Classification */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Weapon Type</label>
+                  <select required value={formData.weaponType} onChange={e => setFormData({...formData, weaponType: e.target.value})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500">
+                    <option value="Pistol">Pistol</option>
+                    <option value="Shotgun">Shotgun</option>
+                    <option value="Sniper">Sniper</option>
+                    <option value="Rifle">Rifle</option>
+                    <option value="Melee">Melee</option>
+                    <option value="Laser">Laser</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Rarity</label>
+                  <select required value={formData.rarity} onChange={e => setFormData({...formData, rarity: e.target.value})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500">
+                    <option value="Common">Common</option>
+                    <option value="Rare">Rare</option>
+                    <option value="Epic">Epic</option>
+                    <option value="Legendary">Legendary</option>
+                  </select>
                 </div>
               </div>
 
