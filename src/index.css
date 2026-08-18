@@ -1,111 +1,173 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700&display=swap');
+
+/* 
+  Hệ thống CSS Gaming Dark Theme & Glassmorphism cho Rogue-Kie - Redesigned by UI-UX-Pro-Max
+  Tập trung tối ưu giao diện điều khiển (Control Center) và bảng số liệu của Game.
+*/
+
+@theme {
+  --font-sans: 'Fira Sans', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+}
+
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --bg-primary: #0F0F23;
+  --bg-secondary: #161633;
+  --bg-card: rgba(39, 39, 59, 0.6);
+  --border-color: rgba(76, 29, 149, 0.4);
+  --border-glow: rgba(124, 58, 237, 0.35);
+  --text-primary: #E2E8F0;
+  --text-secondary: #94A3B8;
+  --accent-purple: #7C3AED;
+  --accent-rose: #F43F5E;
+  
+  --color-primary: #7C3AED;
+  --color-secondary: #A78BFA;
+  --color-accent: #F43F5E;
+  --color-background: #0F0F23;
+  --color-foreground: #E2E8F0;
+  --color-muted: #27273B;
+  --color-border: #4C1D95;
+  --color-destructive: #EF4444;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+  font-family: var(--font-sans);
+  color-scheme: dark;
 }
 
 body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   margin: 0;
+  overflow-x: hidden;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+/* Glassmorphism panel - Space Hangar Style */
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+.glass-panel:hover {
+  border-color: rgba(124, 58, 237, 0.5);
+  box-shadow: 0 0 25px rgba(124, 58, 237, 0.18);
+}
+
+/* Custom scrollbar - Space Station Sleek */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: #1c1c44;
+  border-radius: 99px;
+  border: 1px solid var(--border-color);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-purple);
+}
+
+/* Input, select, textarea styling */
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+  background-color: rgba(15, 15, 35, 0.85) !important;
+  border: 1px solid rgba(124, 58, 237, 0.2) !important;
+  border-radius: 12px !important;
+  padding: 10px 16px !important;
+  color: #fff !important;
+  transition: all 0.25s ease-in-out !important;
+  font-family: var(--font-sans) !important;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--accent-purple) !important;
+  box-shadow: 0 0 15px rgba(124, 58, 237, 0.35) !important;
+  outline: none !important;
+}
+
+/* Custom Table transitions */
+tr {
+  transition: all 0.2s ease;
+}
+
+/* Space Grid Pattern */
+.space-grid {
+  background-color: #0F0F23;
+  background-image: 
+    linear-gradient(rgba(124, 58, 237, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 58, 237, 0.03) 1px, transparent 1px);
+  background-size: 30px 30px;
+  background-position: center;
+}
+
+/* Pulsating server beacon */
+@keyframes beacon-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
   }
 }
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
+
+.beacon-pulse {
+  animation: beacon-pulse 2s infinite;
+}
+
+/* CRT Screen Glow and Scanline Effects */
+.crt-screen {
+  position: relative;
+  overflow: hidden;
+  background-color: #0b0f19;
+}
+
+.crt-screen::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 2;
+  background-size: 100% 4px, 6px 100%;
+  pointer-events: none;
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
   }
 }
-p {
-  margin: 0;
+
+.crt-scanline::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: rgba(18, 16, 16, 0.1);
+  opacity: 0;
+  z-index: 2;
+  pointer-events: none;
+  animation: scanline 6s linear infinite;
+  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(124, 58, 237, 0.08) 10%, rgba(255,255,255,0) 11%);
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
-}

@@ -74,7 +74,8 @@ const BuffManager = () => {
     e.preventDefault();
     try {
       if (editingItem) {
-        await axiosClient.put(`/buffs/${editingItem.id}`, { ...formData, id: editingItem.id });
+        // Cập nhật Buff: Chỉ truyền formData mà không gửi id trong body để khớp với API mới
+        await axiosClient.put(`/buffs/${editingItem.id}`, formData);
       } else {
         await axiosClient.post('/buffs', formData);
       }

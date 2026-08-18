@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from '../components/DataTable';
 import axiosClient from '../api/axiosClient';
+import { useAuth } from '../context/AuthContext';
 
 const EnemyManager = () => {
+  const { isAuthenticated, role } = useAuth();
+  const isWritable = isAuthenticated && (role === 'Admin' || role === 'Developer');
+
   const [data, setData] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
@@ -24,7 +28,7 @@ const EnemyManager = () => {
     { key: 'baseDamage', label: 'Damage' },
     { key: 'moveSpeed', label: 'Move SPD' },
     { key: 'attackSpeed', label: 'ATK SPD' },
-    { key: 'prefabName', label: 'Prefab' },
+    ...(isWritable ? [{ key: 'prefabName', label: 'Prefab' }] : []),
   ];
 
   const loadData = async () => {
@@ -77,7 +81,7 @@ const EnemyManager = () => {
     e.preventDefault();
     try {
       if (editingItem) {
-        await axiosClient.put(`/enemies/${editingItem.id}`, { ...formData, id: editingItem.id });
+        await axiosClient.put(`/enemies/${editingItem.id}`, formData);
       } else {
         await axiosClient.post('/enemies', formData);
       }
