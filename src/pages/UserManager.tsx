@@ -44,6 +44,11 @@ const UserManager = () => {
     }
   }, [isWritable]);
 
+  /**
+   * Thao tác 1-Click Khóa tài khoản người chơi (Lock Account):
+   * Gửi HTTP POST lên API Backend `/admin/users/{id}/lock` để đổi trạng thái IsActive = false.
+   * Tự động làm mới danh sách sau khi khóa thành công.
+   */
   const handleLockUser = async (id: number, username: string) => {
     if (!confirm(`Are you sure you want to LOCK account '${username}'?`)) return;
     try {
@@ -54,6 +59,11 @@ const UserManager = () => {
     }
   };
 
+  /**
+   * Thao tác 1-Click Mở khóa tài khoản người chơi (Unlock Account):
+   * Gửi HTTP POST lên API Backend `/admin/users/{id}/unlock` để khôi phục IsActive = true.
+   * Tự động làm mới danh sách sau khi mở khóa thành công.
+   */
   const handleUnlockUser = async (id: number, username: string) => {
     if (!confirm(`Are you sure you want to UNLOCK account '${username}'?`)) return;
     try {
