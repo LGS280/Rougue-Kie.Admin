@@ -9,8 +9,15 @@ declare const process: {
   };
 };
 
+const getBaseUrl = () => {
+  if (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  return 'https://rougekiebe.azurewebsites.net/api';
+};
+
 const axiosClient = axios.create({
-  baseURL: process?.env?.BASE_URL || '', // HTTPS port from Rogue-Kie.BE
+  baseURL: getBaseUrl(),
   headers: {
     'Content-Type': 'application/json',
   },

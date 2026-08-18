@@ -3,13 +3,14 @@ import axiosClient from '../api/axiosClient';
 import DataTable, { type Column } from '../components/DataTable';
 import { EntityModal, type FormField } from '../components/EntityModal';
 import { useAuth } from '../context/AuthContext';
-import { Shield, Mail, User, ShieldAlert } from 'lucide-react';
+import { Shield, Mail, User, ShieldAlert, Lock, Unlock, CheckCircle2, XCircle } from 'lucide-react';
 
 interface UserAccount {
   id: number;
   username: string;
   email: string;
   roleName: string | null;
+  isActive?: boolean;
 }
 
 const UserManager = () => {
@@ -42,6 +43,26 @@ const UserManager = () => {
       fetchUsersAndRoles();
     }
   }, [isWritable]);
+
+  const handleLockUser = async (id: number, username: string) => {
+    if (!confirm(`Are you sure you want to LOCK account '${username}'?`)) return;
+    try {
+      await axiosClient.post(`/admin/users/${id}/lock`);
+      fetchUsersAndRoles();
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Failed to lock user.');
+    }
+  };
+
+  const handleUnlockUser = async (id: number, username: string) => {
+    if (!confirm(`Are you sure you want to UNLOCK account '${username}'?`)) return;
+    try {
+      await axiosClient.post(`/admin/users/${id}/unlock`);
+      fetchUsersAndRoles();
+    } catch (error: any) {
+      alert(error.response?.data?.message || 'Failed to unlock user.');
+    }
+  };
 
   if (!isWritable) {
     return (
@@ -110,6 +131,52 @@ const UserManager = () => {
             <span className={`font-mono text-xs font-bold uppercase tracking-wider ${isStaff ? 'text-[#F43F5E]' : 'text-emerald-400'}`}>
               {item.roleName || 'PLAYER'}
             </span>
+          </div>
+        );
+      }
+    },
+    {
+      header: 'Account Status',
+      accessor: (item) => {
+        const isLocked = item.isActive === false;
+        return (
+          <div className="flex items-center gap-2">
+            {isLocked ? (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold font-mono bg-rose-500/10 text-rose-400 border border-rose-500/30">
+                <XCircle size={13} /> LOCKED
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-bold font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                <CheckCircle2 size={13} /> ACTIVE
+              </span>
+            )}
+          </div>
+        );
+      }
+    },
+    {
+      header: 'Security Actions',
+      accessor: (item) => {
+        const isLocked = item.isActive === false;
+        return (
+          <div className="flex items-center gap-2">
+            {isLocked ? (
+              <button
+                onClick={() => handleUnlockUser(item.id, item.username)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30 border border-emerald-500/40 transition-all cursor-pointer shadow-sm shadow-emerald-500/10"
+                title="Unlock account"
+              >
+                <Unlock size={14} /> Unlock
+              </button>
+            ) : (
+              <button
+                onClick={() => handleLockUser(item.id, item.username)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-rose-500/20 text-rose-300 hover:bg-rose-500/30 border border-rose-500/40 transition-all cursor-pointer shadow-sm shadow-rose-500/10"
+                title="Lock account"
+              >
+                <Lock size={14} /> Lock Account
+              </button>
+            )}
           </div>
         );
       }
