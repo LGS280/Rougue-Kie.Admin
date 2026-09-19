@@ -15,7 +15,6 @@ const EnemyManager = () => {
   const [formData, setFormData] = useState({
     enemyName: '',
     baseHealth: 100,
-    baseDamage: 10,
     moveSpeed: 5.0,
     attackSpeed: 1.0,
     prefabName: ''
@@ -25,7 +24,6 @@ const EnemyManager = () => {
     { key: 'id', label: 'ID' },
     { key: 'enemyName', label: 'Enemy Name' },
     { key: 'baseHealth', label: 'Health' },
-    { key: 'baseDamage', label: 'Damage' },
     { key: 'moveSpeed', label: 'Move SPD' },
     { key: 'attackSpeed', label: 'ATK SPD' },
     ...(isWritable ? [{ key: 'prefabName', label: 'Prefab' }] : []),
@@ -49,7 +47,6 @@ const EnemyManager = () => {
     setFormData({
       enemyName: '',
       baseHealth: 100,
-      baseDamage: 10,
       moveSpeed: 5.0,
       attackSpeed: 1.0,
       prefabName: ''
@@ -62,7 +59,6 @@ const EnemyManager = () => {
     setFormData({
       enemyName: item.enemyName,
       baseHealth: item.baseHealth,
-      baseDamage: item.baseDamage,
       moveSpeed: item.moveSpeed,
       attackSpeed: item.attackSpeed,
       prefabName: item.prefabName
@@ -105,42 +101,38 @@ const EnemyManager = () => {
       />
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-in fade-in duration-200">
-          <div className="bg-[#1e1e1e] p-8 rounded-2xl border border-gray-800 w-full max-w-md shadow-2xl">
-            <h2 className="text-xl font-bold text-white mb-6">
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-md flex items-center justify-center z-50 animate-in fade-in duration-200">
+          <div className="bg-[#161633] p-8 rounded-2xl border border-[#4C1D95]/40 w-full max-w-md shadow-2xl shadow-[#7C3AED]/10">
+            <h2 className="text-xl font-bold text-[#E2E8F0] mb-6 font-mono tracking-wide">
               {editingItem ? 'Edit Enemy' : 'Add New Enemy'}
             </h2>
             <form onSubmit={handleSave} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Enemy Name</label>
-                <input required type="text" value={formData.enemyName} onChange={e => setFormData({...formData, enemyName: e.target.value})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                <label className="block text-sm font-medium text-gray-400 mb-1 font-sans">Enemy Name</label>
+                <input required type="text" value={formData.enemyName} onChange={e => setFormData({...formData, enemyName: e.target.value})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-[#7C3AED] focus:ring-1 focus:ring-[#7C3AED]/50 transition-all font-sans" />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Base Health</label>
-                  <input required type="number" value={formData.baseHealth} onChange={e => setFormData({...formData, baseHealth: parseInt(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                  <label className="block text-xs font-medium text-gray-400 mb-1 font-sans">Base Health</label>
+                  <input required type="number" value={formData.baseHealth} onChange={e => setFormData({...formData, baseHealth: parseInt(e.target.value) || 0})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#7C3AED] text-sm font-sans" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Base Damage</label>
-                  <input required type="number" value={formData.baseDamage} onChange={e => setFormData({...formData, baseDamage: parseInt(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                  <label className="block text-xs font-medium text-gray-400 mb-1 font-sans">Move Speed</label>
+                  <input required type="number" step="0.1" value={formData.moveSpeed} onChange={e => setFormData({...formData, moveSpeed: parseFloat(e.target.value) || 0})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#7C3AED] text-sm font-sans" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Move Speed</label>
-                  <input required type="number" step="0.1" value={formData.moveSpeed} onChange={e => setFormData({...formData, moveSpeed: parseFloat(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-1">Attack Speed</label>
-                  <input required type="number" step="0.1" value={formData.attackSpeed} onChange={e => setFormData({...formData, attackSpeed: parseFloat(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                  <label className="block text-xs font-medium text-gray-400 mb-1 font-sans">Attack Speed</label>
+                  <input required type="number" step="0.1" value={formData.attackSpeed} onChange={e => setFormData({...formData, attackSpeed: parseFloat(e.target.value) || 0})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#7C3AED] text-sm font-sans" />
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1">Prefab Name (Unity)</label>
-                <input required type="text" value={formData.prefabName} onChange={e => setFormData({...formData, prefabName: e.target.value})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" placeholder="e.g. Prefabs/Enemies/Goblin" />
+                <label className="block text-sm font-medium text-gray-400 mb-1 font-sans">Prefab Name (Unity)</label>
+                <input required type="text" value={formData.prefabName} onChange={e => setFormData({...formData, prefabName: e.target.value})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-[#7C3AED] focus:ring-1 focus:ring-[#7C3AED]/50 transition-all font-sans" placeholder="e.g. Melog, Goblin" />
               </div>
               
               <div className="flex justify-end gap-3 mt-8">
-                <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 text-gray-400 hover:text-white transition-colors">Cancel</button>
-                <button type="submit" className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors font-medium">Save Config</button>
+                <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 text-gray-400 hover:text-white hover:bg-[#27273B]/50 rounded-xl transition-all cursor-pointer">Cancel</button>
+                <button type="submit" className="px-5 py-2.5 bg-gradient-to-r from-[#7C3AED] to-[#F43F5E] hover:from-[#6D28D9] hover:to-[#E11D48] text-white rounded-xl transition-all duration-300 font-medium shadow-md shadow-[#7C3AED]/20 cursor-pointer">Save Config</button>
               </div>
             </form>
           </div>

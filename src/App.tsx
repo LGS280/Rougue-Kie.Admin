@@ -11,6 +11,7 @@ import CharacterManager from './pages/CharacterManager';
 import CosmeticManager from './pages/CosmeticManager';
 import ShopItemManager from './pages/ShopItemManager';
 import UserManager from './pages/UserManager';
+import MaintenanceManager from './pages/MaintenanceManager';
 import Analytics from './pages/Analytics';
 import Login from './pages/Login';
 import { AuthProvider } from './context/AuthContext';
@@ -34,6 +35,7 @@ function App() {
             <Route path="characters" element={<CharacterManager />} />
             <Route path="cosmetics" element={<CosmeticManager />} />
             <Route path="shop-items" element={<ShopItemManager />} />
+            <Route path="maintenance" element={<MaintenanceManager />} />
           </Route>
         </Routes>
       </BrowserRouter>
