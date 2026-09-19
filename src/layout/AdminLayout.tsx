@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom';
-import { LayoutDashboard, Swords, Target, Settings, Zap, LogOut, User, Sparkles, ShoppingBag, BarChart3, Users2 } from 'lucide-react';
+import { LayoutDashboard, Swords, Target, Settings, Zap, LogOut, User, Sparkles, ShoppingBag, BarChart3, Users2, Wrench } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const AdminLayout = () => {
@@ -10,7 +10,8 @@ const AdminLayout = () => {
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/' },
     ...(role === 'Admin' || role === 'Developer' ? [
       { name: 'Analytics', icon: <BarChart3 size={20} />, path: '/analytics' },
-      { name: 'Crew Members (Users)', icon: <Users2 size={20} />, path: '/users' }
+      { name: 'Crew Members (Users)', icon: <Users2 size={20} />, path: '/users' },
+      { name: 'Maintenance', icon: <Wrench size={20} />, path: '/maintenance' }
     ] : []),
     { name: 'Characters', icon: <User size={20} />, path: '/characters' },
     { name: 'Cosmetics', icon: <Sparkles size={20} />, path: '/cosmetics' },
