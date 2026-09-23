@@ -16,7 +16,9 @@ const LevelManager = () => {
     coopExtraRooms: 2,
     coopMobHPMultiplier: 0.4,
     coopBossHPMultiplier: 0.6,
-    coopExtraMobsPerRoom: 1
+    coopExtraMobsPerRoom: 1,
+    chestRoomCount: 1,
+    coopExtraChestRooms: 0
   });
 
   const columns = [
@@ -26,6 +28,8 @@ const LevelManager = () => {
     { key: 'difficultyMultiplier', label: 'Difficulty (x)' },
     { key: 'baseRoomCount', label: 'Base Rooms (Solo)' },
     { key: 'coopExtraRooms', label: 'Co-op +Rooms' },
+    { key: 'chestRoomCount', label: 'Chest Rooms (Solo)' },
+    { key: 'coopExtraChestRooms', label: 'Co-op +Chest' },
     { key: 'coopMobHPMultiplier', label: 'Co-op Mob HP (+/P)' },
     { key: 'coopBossHPMultiplier', label: 'Co-op Boss HP (+/P)' },
     { key: 'coopExtraMobsPerRoom', label: 'Co-op +Mobs/Room' },
@@ -54,7 +58,9 @@ const LevelManager = () => {
       coopExtraRooms: 2,
       coopMobHPMultiplier: 0.4,
       coopBossHPMultiplier: 0.6,
-      coopExtraMobsPerRoom: 1
+      coopExtraMobsPerRoom: 1,
+      chestRoomCount: 1,
+      coopExtraChestRooms: 0
     });
     setModalOpen(true);
   };
@@ -69,7 +75,9 @@ const LevelManager = () => {
       coopExtraRooms: item.coopExtraRooms ?? 2,
       coopMobHPMultiplier: item.coopMobHPMultiplier ?? 0.4,
       coopBossHPMultiplier: item.coopBossHPMultiplier ?? 0.6,
-      coopExtraMobsPerRoom: item.coopExtraMobsPerRoom ?? 1
+      coopExtraMobsPerRoom: item.coopExtraMobsPerRoom ?? 1,
+      chestRoomCount: item.chestRoomCount ?? 1,
+      coopExtraChestRooms: item.coopExtraChestRooms ?? 0
     });
     setModalOpen(true);
   };
@@ -137,6 +145,16 @@ const LevelManager = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">Co-op +Rooms</label>
                   <input required type="number" value={formData.coopExtraRooms} onChange={e => setFormData({...formData, coopExtraRooms: parseInt(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Chest Rooms (Solo)</label>
+                  <input required type="number" value={formData.chestRoomCount} onChange={e => setFormData({...formData, chestRoomCount: parseInt(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-1">Co-op +Chest Rooms</label>
+                  <input required type="number" value={formData.coopExtraChestRooms} onChange={e => setFormData({...formData, coopExtraChestRooms: parseInt(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
