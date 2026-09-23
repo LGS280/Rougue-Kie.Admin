@@ -51,11 +51,17 @@ axiosClient.interceptors.response.use(
   },
   (error) => {
     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      // Dọn dẹp bộ nhớ tạm LocalStorage và điều hướng về trang đăng nhập
+      // Dọn dẹp bộ nhớ tạm LocalStorage
       localStorage.removeItem('token');
       localStorage.removeItem('username');
       localStorage.removeItem('role');
-      window.location.href = '/login';
+
+      // Chỉ chuyển hướng sang /login nếu đang ở một trang yêu cầu quyền cụ thể
+      // Tránh việc người dùng ở trang chủ / bị ép nhảy sang /login và reload gây 404
+      const currentPath = window.location.pathname;
+      if (currentPath !== '/login' && currentPath !== '/') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
