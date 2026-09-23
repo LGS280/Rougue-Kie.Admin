@@ -1,5 +1,5 @@
 
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AdminLayout from './layout/AdminLayout';
 import Dashboard from './pages/Dashboard';
 import EnemyManager from './pages/EnemyManager';
@@ -37,6 +37,8 @@ function App() {
             <Route path="shop-items" element={<ShopItemManager />} />
             <Route path="maintenance" element={<MaintenanceManager />} />
           </Route>
+          {/* Fallback route cho bất kỳ đường dẫn không xác định nào */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
