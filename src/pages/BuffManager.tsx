@@ -11,7 +11,7 @@ const BuffManager = () => {
     buffName: '',
     description: '',
     iconPath: '',
-    buffType: 'Health',
+    buffType: 'MaxHP',
     value: 10,
     rarity: 'Common'
   });
@@ -43,7 +43,7 @@ const BuffManager = () => {
       buffName: '',
       description: '',
       iconPath: '',
-      buffType: 'Health',
+      buffType: 'MaxHP',
       value: 10,
       rarity: 'Common'
     });
@@ -117,11 +117,13 @@ const BuffManager = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">Buff Type</label>
                   <select value={formData.buffType} onChange={e => setFormData({...formData, buffType: e.target.value})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-yellow-500">
-                    <option value="Health">Health</option>
+                    <option value="MaxHP">Max HP</option>
+                    <option value="MaxArmor">Max Armor</option>
+                    <option value="MaxMana">Max Mana</option>
                     <option value="Damage">Damage</option>
+                    <option value="CritChance">Crit Chance</option>
                     <option value="FireRate">Fire Rate</option>
-                    <option value="MoveSpeed">Move Speed</option>
-                    <option value="PoisonImmunity">Poison Immunity</option>
+                    <option value="CoinMultiplier">Coin Multiplier</option>
                   </select>
                 </div>
                 <div>
