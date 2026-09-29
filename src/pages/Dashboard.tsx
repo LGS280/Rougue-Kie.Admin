@@ -73,10 +73,18 @@ const Dashboard = () => {
     const startTime = performance.now();
     try {
       setIsRefreshing(true);
-      const [statsRes, ccuRes, activitiesRes, enemies, weapons, bullets, levels, buffs] = await Promise.all([
-        axiosClient.get('/admin/stats').catch(() => null),
-        axiosClient.get('/admin/ccu').catch(() => null),
-        axiosClient.get('/admin/recent-activities?limit=30').catch(() => null),
+      
+      // Chỉ tải các số liệu quản trị nhạy cảm (/admin/*) khi đã đăng nhập có quyền Admin/Developer
+      // Tránh việc người dùng chưa đăng nhập bị dính lỗi 401 và tự động giật trang sang /login
+      const [statsRes, ccuRes, activitiesRes] = isWritable
+        ? await Promise.all([
+            axiosClient.get('/admin/stats').catch(() => null),
+            axiosClient.get('/admin/ccu').catch(() => null),
+            axiosClient.get('/admin/recent-activities?limit=30').catch(() => null),
+          ])
+        : [null, null, null];
+
+      const [enemies, weapons, bullets, levels, buffs] = await Promise.all([
         axiosClient.get('/enemies').catch(() => []),
         axiosClient.get('/weapons').catch(() => []),
         axiosClient.get('/bullets').catch(() => []),
@@ -125,7 +133,9 @@ const Dashboard = () => {
         setLogs([
           `[${now}] [SYS] Gateway Online: Connected to Azure SignalR Hub.`,
           `[${now}] [SYS] Neon PostgreSQL Database: Operational & Synchronized.`,
-          `[${now}] [SYS] Hangar Telemetry ready: Waiting for new player expeditions.`
+          isWritable 
+            ? `[${now}] [SYS] Hangar Telemetry ready: Waiting for new player expeditions.`
+            : `[${now}] [INFO] Khách vãng lai: Vui lòng đăng nhập quyền Admin để xem số liệu vận hành trực tiếp.`
         ]);
       }
 
@@ -146,7 +156,7 @@ const Dashboard = () => {
     }, 10000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isWritable]);
 
   // Scroll to bottom on new log
   useEffect(() => {
