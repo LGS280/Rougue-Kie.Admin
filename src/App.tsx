@@ -22,37 +22,29 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Public Routes */}
+          {/* Public Auth Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
 
-          {/* Protected Routes - Toàn bộ các trang quản trị được bảo vệ */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <AdminLayout />
-              </ProtectedRoute>
-            }
-          >
+          {/* Giao diện chính AdminLayout: Khách (Guest) được xem dữ liệu ở chế độ Read-Only */}
+          <Route path="/" element={<AdminLayout />}>
+            {/* Các trang Catalog công khai (Chế độ xem tự động chuyển sang Read-Only khi chưa login) */}
             <Route index element={<Dashboard />} />
-
-            {/* Các route yêu cầu quyền cao hơn (Admin, Developer) */}
-            <Route element={<ProtectedRoute allowedRoles={['Admin', 'Developer']} />}>
-              <Route path="analytics" element={<Analytics />} />
-              <Route path="users" element={<UserManager />} />
-              <Route path="maintenance" element={<MaintenanceManager />} />
-            </Route>
-
-            {/* Các route quản lý cấu hình game */}
+            <Route path="characters" element={<CharacterManager />} />
+            <Route path="cosmetics" element={<CosmeticManager />} />
+            <Route path="shop-items" element={<ShopItemManager />} />
             <Route path="enemies" element={<EnemyManager />} />
             <Route path="weapons" element={<WeaponManager />} />
             <Route path="bullets" element={<BulletManager />} />
             <Route path="levels" element={<LevelManager />} />
             <Route path="buffs" element={<BuffManager />} />
-            <Route path="characters" element={<CharacterManager />} />
-            <Route path="cosmetics" element={<CosmeticManager />} />
-            <Route path="shop-items" element={<ShopItemManager />} />
+
+            {/* Các trang quản trị cấp cao nhạy cảm: BẮT BUỘC phải đăng nhập quyền Admin / Developer */}
+            <Route element={<ProtectedRoute allowedRoles={['Admin', 'Developer']} />}>
+              <Route path="analytics" element={<Analytics />} />
+              <Route path="users" element={<UserManager />} />
+              <Route path="maintenance" element={<MaintenanceManager />} />
+            </Route>
           </Route>
 
           {/* Fallback route cho bất kỳ đường dẫn không xác định nào */}
