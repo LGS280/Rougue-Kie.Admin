@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axiosClient from '../api/axiosClient';
 import { useAuth } from '../context/AuthContext';
 
@@ -9,7 +9,18 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const location = useLocation();
+  const { login, isAuthenticated } = useAuth();
+
+  // Xác định trang trước đó người dùng muốn truy cập (mặc định về '/')
+  const from = (location.state as any)?.from?.pathname || '/';
+
+  // Nếu người dùng đã đăng nhập từ trước, tự động chuyển về trang đích
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, from]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +38,7 @@ const Login = () => {
         // Enforce RBAC
         if (response.role === 'Admin' || response.role === 'Developer') {
           login(response.token, response.username, response.role);
-          navigate('/');
+          navigate(from, { replace: true });
         } else {
           setError('Bạn không có quyền truy cập trang quản trị.');
         }

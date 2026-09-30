@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 interface AuthState {
   token: string | null;
@@ -15,28 +15,28 @@ interface AuthContextType extends AuthState {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [authState, setAuthState] = useState<AuthState>({
-    token: null,
-    username: null,
-    role: null,
-    isAuthenticated: false,
-  });
-
-  useEffect(() => {
-    // Check local storage on mount
+  const [authState, setAuthState] = useState<AuthState>(() => {
+    // Khởi tạo đồng bộ ngay từ localStorage để tránh flash unauthenticated khi F5 refresh trang
     const token = localStorage.getItem('token');
     const username = localStorage.getItem('username');
     const role = localStorage.getItem('role');
 
     if (token && username && role) {
-      setAuthState({
+      return {
         token,
         username,
         role,
         isAuthenticated: true,
-      });
+      };
     }
-  }, []);
+
+    return {
+      token: null,
+      username: null,
+      role: null,
+      isAuthenticated: false,
+    };
+  });
 
   const login = (token: string, username: string, role: string) => {
     localStorage.setItem('token', token);

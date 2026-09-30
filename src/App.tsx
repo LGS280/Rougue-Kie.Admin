@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import AdminLayout from './layout/AdminLayout';
 import Dashboard from './pages/Dashboard';
@@ -14,19 +13,38 @@ import UserManager from './pages/UserManager';
 import MaintenanceManager from './pages/MaintenanceManager';
 import Analytics from './pages/Analytics';
 import Login from './pages/Login';
+import Unauthorized from './pages/Unauthorized';
+import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
-
 
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          {/* Public Routes */}
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={<AdminLayout />}>
+          <Route path="/unauthorized" element={<Unauthorized />} />
+
+          {/* Protected Routes - Toàn bộ các trang quản trị được bảo vệ */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <AdminLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route index element={<Dashboard />} />
-            <Route path="analytics" element={<Analytics />} />
-            <Route path="users" element={<UserManager />} />
+
+            {/* Các route yêu cầu quyền cao hơn (Admin, Developer) */}
+            <Route element={<ProtectedRoute allowedRoles={['Admin', 'Developer']} />}>
+              <Route path="analytics" element={<Analytics />} />
+              <Route path="users" element={<UserManager />} />
+              <Route path="maintenance" element={<MaintenanceManager />} />
+            </Route>
+
+            {/* Các route quản lý cấu hình game */}
             <Route path="enemies" element={<EnemyManager />} />
             <Route path="weapons" element={<WeaponManager />} />
             <Route path="bullets" element={<BulletManager />} />
@@ -35,8 +53,8 @@ function App() {
             <Route path="characters" element={<CharacterManager />} />
             <Route path="cosmetics" element={<CosmeticManager />} />
             <Route path="shop-items" element={<ShopItemManager />} />
-            <Route path="maintenance" element={<MaintenanceManager />} />
           </Route>
+
           {/* Fallback route cho bất kỳ đường dẫn không xác định nào */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
