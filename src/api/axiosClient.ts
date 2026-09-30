@@ -50,17 +50,24 @@ axiosClient.interceptors.response.use(
     return response.data;
   },
   (error) => {
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      // Dọn dẹp bộ nhớ tạm LocalStorage
-      localStorage.removeItem('token');
-      localStorage.removeItem('username');
-      localStorage.removeItem('role');
-
-      // Chỉ chuyển hướng sang /login nếu đang ở một trang yêu cầu quyền cụ thể
-      // Tránh việc người dùng ở trang chủ / bị ép nhảy sang /login và reload gây 404
+    if (error.response) {
+      const status = error.response.status;
       const currentPath = window.location.pathname;
-      if (currentPath !== '/login' && currentPath !== '/') {
-        window.location.href = '/login';
+
+      if (status === 401) {
+        // Xóa sạch session khi token không hợp lệ hoặc đã hết hạn
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        localStorage.removeItem('role');
+
+        if (currentPath !== '/login') {
+          window.location.href = '/login';
+        }
+      } else if (status === 403) {
+        // Bị từ chối quyền truy cập (Role không đủ)
+        if (currentPath !== '/unauthorized') {
+          window.location.href = '/unauthorized';
+        }
       }
     }
     return Promise.reject(error);
