@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Swords, Target, Settings, Zap, LogOut, User, Sparkles, ShoppingBag, BarChart3, Users2, Wrench, Eye } from 'lucide-react';
+import { LayoutDashboard, Swords, Target, Settings, Zap, LogOut, User, Sparkles, ShoppingBag, BarChart3, Users2, Wrench } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const AdminLayout = () => {
@@ -110,18 +110,12 @@ const AdminLayout = () => {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-3">
-                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#27273B]/70 border border-[#4C1D95]/40 text-xs font-mono text-gray-300 shadow-sm">
-                  <Eye size={14} className="text-[#A78BFA]" />
-                  <span>Chế độ Khách (Chỉ Xem)</span>
-                </div>
-                <NavLink
-                  to="/login"
-                  className="px-4 py-2 bg-gradient-to-r from-[#7C3AED] to-[#F43F5E] hover:from-[#6D28D9] hover:to-[#E11D48] text-white rounded-xl font-medium text-sm transition-all duration-300 shadow-md shadow-[#7C3AED]/20 hover:shadow-[#7C3AED]/35 active:scale-95"
-                >
-                  Admin Login
-                </NavLink>
-              </div>
+              <NavLink
+                to="/login"
+                className="px-4 py-2 bg-gradient-to-r from-[#7C3AED] to-[#F43F5E] hover:from-[#6D28D9] hover:to-[#E11D48] text-white rounded-xl font-medium text-sm transition-all duration-300 shadow-md shadow-[#7C3AED]/20 hover:shadow-[#7C3AED]/35 active:scale-95"
+              >
+                Admin Login
+              </NavLink>
             )}
           </div>
         </header>
