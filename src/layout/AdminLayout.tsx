@@ -1,10 +1,16 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Swords, Target, Settings, Zap, LogOut, User, Sparkles, ShoppingBag, BarChart3, Users2, Wrench } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const AdminLayout = () => {
+  const navigate = useNavigate();
   // Trích xuất các thuộc tính xác thực từ Context để phân quyền hiển thị
   const { isAuthenticated, username, role, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login', { replace: true });
+  };
   
   const menuItems = [
     { name: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/' },
@@ -91,7 +97,7 @@ const AdminLayout = () => {
                   <div className="text-xs text-[#A78BFA] font-mono uppercase tracking-wider">{role}</div>
                 </div>
                 <button
-                  onClick={logout}
+                  onClick={handleLogout}
                   className="p-2 text-gray-400 hover:text-[#EF4444] hover:bg-[#EF4444]/15 rounded-xl transition-all duration-200 cursor-pointer"
                   title="Đăng xuất"
                 >
