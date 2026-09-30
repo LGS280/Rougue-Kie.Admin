@@ -119,42 +119,69 @@ const ShopItemManager = () => {
               {editingItem ? 'Sửa Gói Cửa Hàng' : 'Thêm Gói Cửa Hàng Mới'}
             </h2>
             <form onSubmit={handleSave} className="space-y-4">
-              {/* Dropdown chọn súng từ danh sách WeaponConfigs có sẵn */}
+              {/* Dropdown chọn súng hoặc nhân vật để tự động điền */}
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1 font-sans">
-                  Chọn Súng Có Sẵn (Tự động điền)
+                  Chọn Súng / Nhân Vật (Tự động điền)
                 </label>
                 <select
                   onChange={(e) => {
-                    const selected = weapons.find((w: any) => w.id === parseInt(e.target.value));
-                    if (selected) {
+                    const val = e.target.value;
+                    if (val === 'char_rookie') {
                       setFormData({
                         ...formData,
-                        name: selected.weaponName,
-                        description: `Súng ${selected.weaponName} (${selected.weaponType} - ${selected.rarity})`
+                        name: 'Rookie',
+                        itemType: 'CHARACTER',
+                        currencyType: 'GEM',
+                        description: 'Chiến binh tân binh can trường. Chỉ số cân bằng toàn diện.',
+                        price: 0
                       });
+                    } else if (val === 'char_zero') {
+                      setFormData({
+                        ...formData,
+                        name: 'Hero Zero',
+                        itemType: 'CHARACTER',
+                        currencyType: 'GEM',
+                        description: 'Đặc nhiệm cyborg công nghệ cao với tốc độ di chuyển vượt trội.',
+                        price: 200
+                      });
+                    } else {
+                      const selected = weapons.find((w: any) => w.id === parseInt(val));
+                      if (selected) {
+                        setFormData({
+                          ...formData,
+                          name: selected.weaponName,
+                          description: `Súng ${selected.weaponName} (${selected.weaponType} - ${selected.rarity})`
+                        });
+                      }
                     }
                   }}
                   defaultValue=""
                   className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-[#7C3AED] focus:ring-1 focus:ring-[#7C3AED]/50 transition-all font-sans"
                 >
-                  <option value="">-- Chọn súng để tự động điền tên & mô tả --</option>
-                  {weapons.map((w: any) => (
-                    <option key={w.id} value={w.id}>
-                      {w.weaponName} ({w.weaponType} - {w.rarity})
-                    </option>
-                  ))}
+                  <option value="">-- Chọn súng hoặc nhân vật để tự động điền --</option>
+                  <optgroup label="Nhân Vật (Characters)">
+                    <option value="char_rookie">Rookie (Tân binh mặc định - 0 Gem)</option>
+                    <option value="char_zero">Hero Zero (Cyborg đặc nhiệm - 200 Gem)</option>
+                  </optgroup>
+                  <optgroup label="Vũ Khí (Weapons)">
+                    {weapons.map((w: any) => (
+                      <option key={w.id} value={w.id}>
+                        {w.weaponName} ({w.weaponType} - {w.rarity})
+                      </option>
+                    ))}
+                  </optgroup>
                 </select>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-1 font-sans">Tên gói / Tên súng</label>
-                <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-[#7C3AED] focus:ring-1 focus:ring-[#7C3AED]/50 transition-all font-sans" placeholder="Ví dụ: AK-47 Gold" />
+                <label className="block text-sm font-medium text-gray-400 mb-1 font-sans">Tên gói / Tên vật phẩm</label>
+                <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-[#7C3AED] focus:ring-1 focus:ring-[#7C3AED]/50 transition-all font-sans" placeholder="Ví dụ: Hero Zero hoặc AK-47 Gold" />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1 font-sans">Mô tả gói</label>
-                <textarea value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-[#7C3AED] focus:ring-1 focus:ring-[#7C3AED]/50 transition-all font-sans" rows={2} placeholder="Thông tin chi tiết về gói súng..." />
+                <textarea value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-[#7C3AED] focus:ring-1 focus:ring-[#7C3AED]/50 transition-all font-sans" rows={2} placeholder="Thông tin chi tiết về gói vật phẩm..." />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -171,7 +198,8 @@ const ShopItemManager = () => {
                   >
                     <option value="WEAPON_GEM">Tab GEM WEAPONS</option>
                     <option value="WEAPON_VIP">Tab VIP (VietQR)</option>
-                    <option value="SKIN">Tab SKINS</option>
+                    <option value="CHARACTER">Tab CHARACTERS (Nhân vật)</option>
+                    <option value="SKIN">Tab SKINS (Trang phục cũ)</option>
                   </select>
                 </div>
                 <div>
