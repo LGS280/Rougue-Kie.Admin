@@ -55,12 +55,16 @@ axiosClient.interceptors.response.use(
       const currentPath = window.location.pathname;
 
       if (status === 401) {
+        // Kiểm tra xem trước đó người dùng có lưu token không (phiên làm việc hết hạn)
+        const hadToken = !!localStorage.getItem('token');
+
         // Xóa sạch session khi token không hợp lệ hoặc đã hết hạn
         localStorage.removeItem('token');
         localStorage.removeItem('username');
         localStorage.removeItem('role');
 
-        if (currentPath !== '/login') {
+        // Nếu tài khoản từng đăng nhập mà token bị hết hạn, chuyển ngay về /login
+        if (hadToken && currentPath !== '/login') {
           window.location.href = '/login';
         }
       } else if (status === 403) {

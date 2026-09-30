@@ -1,15 +1,20 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Swords, Target, Settings, Zap, LogOut, User, Sparkles, ShoppingBag, BarChart3, Users2, Wrench } from 'lucide-react';
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { LayoutDashboard, Swords, Target, Settings, Zap, LogOut, User, Sparkles, ShoppingBag, BarChart3, Users2, Wrench, Eye } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const AdminLayout = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   // Trích xuất các thuộc tính xác thực từ Context để phân quyền hiển thị
   const { isAuthenticated, username, role, logout } = useAuth();
 
   const handleLogout = () => {
     logout();
-    navigate('/login', { replace: true });
+    // Nếu đang ở trang nhạy cảm yêu cầu quyền Admin, chuyển về trang chủ /
+    const sensitivePaths = ['/analytics', '/users', '/maintenance'];
+    if (sensitivePaths.some(p => location.pathname.startsWith(p))) {
+      navigate('/', { replace: true });
+    }
   };
   
   const menuItems = [
@@ -105,12 +110,18 @@ const AdminLayout = () => {
                 </button>
               </div>
             ) : (
-              <NavLink
-                to="/login"
-                className="px-4 py-2 bg-gradient-to-r from-[#7C3AED] to-[#F43F5E] hover:from-[#6D28D9] hover:to-[#E11D48] text-white rounded-xl font-medium text-sm transition-all duration-300 shadow-md shadow-[#7C3AED]/20 hover:shadow-[#7C3AED]/35 active:scale-95"
-              >
-                Admin Login
-              </NavLink>
+              <div className="flex items-center gap-3">
+                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#27273B]/70 border border-[#4C1D95]/40 text-xs font-mono text-gray-300 shadow-sm">
+                  <Eye size={14} className="text-[#A78BFA]" />
+                  <span>Chế độ Khách (Chỉ Xem)</span>
+                </div>
+                <NavLink
+                  to="/login"
+                  className="px-4 py-2 bg-gradient-to-r from-[#7C3AED] to-[#F43F5E] hover:from-[#6D28D9] hover:to-[#E11D48] text-white rounded-xl font-medium text-sm transition-all duration-300 shadow-md shadow-[#7C3AED]/20 hover:shadow-[#7C3AED]/35 active:scale-95"
+                >
+                  Admin Login
+                </NavLink>
+              </div>
             )}
           </div>
         </header>
