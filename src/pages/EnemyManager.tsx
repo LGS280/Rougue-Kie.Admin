@@ -2,6 +2,15 @@ import React, { useEffect, useState } from 'react';
 import DataTable from '../components/DataTable';
 import axiosClient from '../api/axiosClient';
 import { useAuth } from '../context/AuthContext';
+import { sanitizeNumberInput, normalizeNumberPayload, handleNumberFocus } from '../utils/numberInput';
+
+interface EnemyFormData {
+  enemyName: string;
+  baseHealth: number | string;
+  moveSpeed: number | string;
+  attackSpeed: number | string;
+  prefabName: string;
+}
 
 const EnemyManager = () => {
   const { isAuthenticated, role } = useAuth();
@@ -12,7 +21,7 @@ const EnemyManager = () => {
   const [editingItem, setEditingItem] = useState<any>(null);
   
   // Form State
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<EnemyFormData>({
     enemyName: '',
     baseHealth: 100,
     moveSpeed: 5.0,
@@ -76,10 +85,16 @@ const EnemyManager = () => {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const payload = {
+        ...formData,
+        baseHealth: normalizeNumberPayload(formData.baseHealth, 100),
+        moveSpeed: normalizeNumberPayload(formData.moveSpeed, 5.0),
+        attackSpeed: normalizeNumberPayload(formData.attackSpeed, 1.0),
+      };
       if (editingItem) {
-        await axiosClient.put(`/enemies/${editingItem.id}`, formData);
+        await axiosClient.put(`/enemies/${editingItem.id}`, payload);
       } else {
-        await axiosClient.post('/enemies', formData);
+        await axiosClient.post('/enemies', payload);
       }
       setModalOpen(false);
       loadData();
@@ -114,15 +129,15 @@ const EnemyManager = () => {
               <div className="grid grid-cols-3 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-gray-400 mb-1 font-sans">Base Health</label>
-                  <input required type="number" value={formData.baseHealth} onChange={e => setFormData({...formData, baseHealth: parseInt(e.target.value) || 0})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#7C3AED] text-sm font-sans" />
+                  <input required type="number" value={formData.baseHealth ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, baseHealth: sanitizeNumberInput(e.target.value)})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#7C3AED] text-sm font-sans" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-400 mb-1 font-sans">Move Speed</label>
-                  <input required type="number" step="0.1" value={formData.moveSpeed} onChange={e => setFormData({...formData, moveSpeed: parseFloat(e.target.value) || 0})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#7C3AED] text-sm font-sans" />
+                  <input required type="number" step="0.1" value={formData.moveSpeed ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, moveSpeed: sanitizeNumberInput(e.target.value, true)})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#7C3AED] text-sm font-sans" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-400 mb-1 font-sans">Attack Speed</label>
-                  <input required type="number" step="0.1" value={formData.attackSpeed} onChange={e => setFormData({...formData, attackSpeed: parseFloat(e.target.value) || 0})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#7C3AED] text-sm font-sans" />
+                  <input required type="number" step="0.1" value={formData.attackSpeed ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, attackSpeed: sanitizeNumberInput(e.target.value, true)})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#7C3AED] text-sm font-sans" />
                 </div>
               </div>
               <div>
