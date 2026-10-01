@@ -2,6 +2,27 @@ import React, { useEffect, useState } from 'react';
 import DataTable from '../components/DataTable';
 import axiosClient from '../api/axiosClient';
 import { useAuth } from '../context/AuthContext';
+import { sanitizeNumberInput, normalizeNumberPayload, handleNumberFocus } from '../utils/numberInput';
+
+interface WeaponFormData {
+  weaponName: string;
+  prefabName: string;
+  fireRate: number | string;
+  manaCost: number | string;
+  bulletsPerShot: number | string;
+  spreadAngle: number | string;
+  shootSound: string;
+  shootVolume: number | string;
+  handPositionX: number | string;
+  handPositionY: number | string;
+  handPositionZ: number | string;
+  recoilDistance: number | string;
+  recoilDuration: number | string;
+  returnDuration: number | string;
+  weaponType: string;
+  rarity: string;
+  bulletId: number;
+}
 
 const WeaponManager = () => {
   const { isAuthenticated, role } = useAuth();
@@ -12,7 +33,7 @@ const WeaponManager = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
   
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<WeaponFormData>({
     weaponName: '',
     prefabName: '',
     fireRate: 0.5,
@@ -118,10 +139,24 @@ const WeaponManager = () => {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const payload = {
+        ...formData,
+        fireRate: normalizeNumberPayload(formData.fireRate, 0.5),
+        manaCost: normalizeNumberPayload(formData.manaCost, 10),
+        bulletsPerShot: normalizeNumberPayload(formData.bulletsPerShot, 1),
+        spreadAngle: normalizeNumberPayload(formData.spreadAngle, 0.0),
+        shootVolume: normalizeNumberPayload(formData.shootVolume, 1.0),
+        handPositionX: normalizeNumberPayload(formData.handPositionX, 0),
+        handPositionY: normalizeNumberPayload(formData.handPositionY, 0),
+        handPositionZ: normalizeNumberPayload(formData.handPositionZ, 0),
+        recoilDistance: normalizeNumberPayload(formData.recoilDistance, 0.15),
+        recoilDuration: normalizeNumberPayload(formData.recoilDuration, 0.05),
+        returnDuration: normalizeNumberPayload(formData.returnDuration, 0.1),
+      };
       if (editingItem) {
-        await axiosClient.put(`/weapons/${editingItem.id}`, formData);
+        await axiosClient.put(`/weapons/${editingItem.id}`, payload);
       } else {
-        await axiosClient.post('/weapons', formData);
+        await axiosClient.post('/weapons', payload);
       }
       setModalOpen(false);
       loadData();
@@ -191,19 +226,19 @@ const WeaponManager = () => {
                 <div className="grid grid-cols-4 gap-4">
                   <div>
                     <label className="block text-xs font-medium text-gray-400 mb-1">Fire Rate</label>
-                    <input required type="number" step="0.1" value={formData.fireRate} onChange={e => setFormData({...formData, fireRate: parseFloat(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" />
+                    <input required type="number" step="0.1" value={formData.fireRate ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, fireRate: sanitizeNumberInput(e.target.value, true)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" />
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-400 mb-1">Mana Cost</label>
-                    <input required type="number" value={formData.manaCost} onChange={e => setFormData({...formData, manaCost: parseInt(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" />
+                    <input required type="number" value={formData.manaCost ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, manaCost: sanitizeNumberInput(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" />
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-400 mb-1">Bullets / Shot</label>
-                    <input required type="number" value={formData.bulletsPerShot} onChange={e => setFormData({...formData, bulletsPerShot: parseInt(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" />
+                    <input required type="number" value={formData.bulletsPerShot ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, bulletsPerShot: sanitizeNumberInput(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" />
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-400 mb-1">Spread Angle</label>
-                    <input required type="number" step="0.1" value={formData.spreadAngle} onChange={e => setFormData({...formData, spreadAngle: parseFloat(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" />
+                    <input required type="number" step="0.1" value={formData.spreadAngle ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, spreadAngle: sanitizeNumberInput(e.target.value, true)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" />
                   </div>
                 </div>
               </div>
@@ -215,17 +250,17 @@ const WeaponManager = () => {
                   <div>
                     <label className="block text-xs font-medium text-gray-400 mb-2">Hand Position (X, Y, Z)</label>
                     <div className="grid grid-cols-3 gap-2">
-                      <input type="number" step="0.01" value={formData.handPositionX} onChange={e => setFormData({...formData, handPositionX: parseFloat(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-2 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" />
-                      <input type="number" step="0.01" value={formData.handPositionY} onChange={e => setFormData({...formData, handPositionY: parseFloat(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-2 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" />
-                      <input type="number" step="0.01" value={formData.handPositionZ} onChange={e => setFormData({...formData, handPositionZ: parseFloat(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-2 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" />
+                      <input type="number" step="0.01" value={formData.handPositionX ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, handPositionX: sanitizeNumberInput(e.target.value, true)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-2 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" />
+                      <input type="number" step="0.01" value={formData.handPositionY ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, handPositionY: sanitizeNumberInput(e.target.value, true)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-2 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" />
+                      <input type="number" step="0.01" value={formData.handPositionZ ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, handPositionZ: sanitizeNumberInput(e.target.value, true)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-2 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" />
                     </div>
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-400 mb-2">Recoil (Dist, Dur, Return)</label>
                     <div className="grid grid-cols-3 gap-2">
-                      <input type="number" step="0.01" value={formData.recoilDistance} onChange={e => setFormData({...formData, recoilDistance: parseFloat(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-2 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" title="Recoil Distance" />
-                      <input type="number" step="0.01" value={formData.recoilDuration} onChange={e => setFormData({...formData, recoilDuration: parseFloat(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-2 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" title="Recoil Duration" />
-                      <input type="number" step="0.01" value={formData.returnDuration} onChange={e => setFormData({...formData, returnDuration: parseFloat(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-2 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" title="Return Duration" />
+                      <input type="number" step="0.01" value={formData.recoilDistance ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, recoilDistance: sanitizeNumberInput(e.target.value, true)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-2 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" title="Recoil Distance" />
+                      <input type="number" step="0.01" value={formData.recoilDuration ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, recoilDuration: sanitizeNumberInput(e.target.value, true)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-2 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" title="Recoil Duration" />
+                      <input type="number" step="0.01" value={formData.returnDuration ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, returnDuration: sanitizeNumberInput(e.target.value, true)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-2 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" title="Return Duration" />
                     </div>
                   </div>
                 </div>
@@ -241,7 +276,7 @@ const WeaponManager = () => {
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-400 mb-1">Shoot Volume</label>
-                    <input type="number" step="0.1" min="0" max="1" value={formData.shootVolume} onChange={e => setFormData({...formData, shootVolume: parseFloat(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" />
+                    <input type="number" step="0.1" min="0" max="1" value={formData.shootVolume ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, shootVolume: sanitizeNumberInput(e.target.value, true)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-1 text-white focus:outline-none focus:border-blue-500 text-sm" />
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-400 mb-1">Bullet Type</label>

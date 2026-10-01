@@ -1,6 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from '../components/DataTable';
 import axiosClient from '../api/axiosClient';
+import { sanitizeNumberInput, normalizeNumberPayload, handleNumberFocus } from '../utils/numberInput';
+
+// Định nghĩa kiểu dữ liệu form nhân vật với các trường số có thể nhận chuỗi rỗng khi đang chỉnh sửa
+interface CharacterFormData {
+  name: string;
+  description: string;
+  baseHealth: number | string;
+  baseArmor: number | string;
+  baseMana: number | string;
+  prefabName: string;
+  skillSet: string;
+  unlockPrice: number | string;
+  currencyType: string;
+}
 
 // Lớp quản lý cấu hình các nhân vật playable trong hệ thống Web Admin
 const CharacterManager = () => {
@@ -9,7 +23,7 @@ const CharacterManager = () => {
   const [editingItem, setEditingItem] = useState<any>(null);
   
   // Form State
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CharacterFormData>({
     name: '',
     description: '',
     baseHealth: 5,
@@ -102,10 +116,17 @@ const CharacterManager = () => {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const payload = {
+        ...formData,
+        baseHealth: normalizeNumberPayload(formData.baseHealth, 5),
+        baseArmor: normalizeNumberPayload(formData.baseArmor, 0),
+        baseMana: normalizeNumberPayload(formData.baseMana, 200),
+        unlockPrice: normalizeNumberPayload(formData.unlockPrice, 0),
+      };
       if (editingItem) {
-        await axiosClient.put(`/characters/${editingItem.characterId}`, formData);
+        await axiosClient.put(`/characters/${editingItem.characterId}`, payload);
       } else {
-        await axiosClient.post('/characters', formData);
+        await axiosClient.post('/characters', payload);
       }
       setModalOpen(false);
       loadData();
@@ -159,22 +180,22 @@ const CharacterManager = () => {
               <div className="grid grid-cols-3 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-gray-400 mb-1 font-sans">Máu (HP)</label>
-                  <input required type="number" value={formData.baseHealth} onChange={e => setFormData({...formData, baseHealth: parseInt(e.target.value) || 0})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#7C3AED] text-sm font-sans" />
+                  <input required type="number" value={formData.baseHealth ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, baseHealth: sanitizeNumberInput(e.target.value)})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#7C3AED] text-sm font-sans" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-400 mb-1 font-sans">Giáp (Armor)</label>
-                  <input required type="number" value={formData.baseArmor} onChange={e => setFormData({...formData, baseArmor: parseInt(e.target.value) || 0})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#7C3AED] text-sm font-sans" />
+                  <input required type="number" value={formData.baseArmor ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, baseArmor: sanitizeNumberInput(e.target.value)})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#7C3AED] text-sm font-sans" />
                 </div>
                 <div>
                   <label className="block text-xs font-medium text-gray-400 mb-1 font-sans">Mana</label>
-                  <input required type="number" value={formData.baseMana} onChange={e => setFormData({...formData, baseMana: parseInt(e.target.value) || 0})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#7C3AED] text-sm font-sans" />
+                  <input required type="number" value={formData.baseMana ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, baseMana: sanitizeNumberInput(e.target.value)})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-[#7C3AED] text-sm font-sans" />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1 font-sans">Giá mở khóa</label>
-                  <input required type="number" value={formData.unlockPrice} onChange={e => setFormData({...formData, unlockPrice: parseInt(e.target.value) || 0})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-[#7C3AED] focus:ring-1 focus:ring-[#7C3AED]/50 transition-all font-sans" />
+                  <input required type="number" value={formData.unlockPrice ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, unlockPrice: sanitizeNumberInput(e.target.value)})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-[#7C3AED] focus:ring-1 focus:ring-[#7C3AED]/50 transition-all font-sans" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1 font-sans">Loại tiền tệ</label>

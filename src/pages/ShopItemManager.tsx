@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from '../components/DataTable';
 import axiosClient from '../api/axiosClient';
+import { sanitizeNumberInput, normalizeNumberPayload, handleNumberFocus } from '../utils/numberInput';
+
+interface ShopItemFormData {
+  name: string;
+  itemType: string;
+  description: string;
+  price: number | string;
+  currencyType: string;
+}
 
 // Quản lý các gói súng và vật phẩm bày bán trong Cửa Hàng (Shop Packages)
 const ShopItemManager = () => {
@@ -10,7 +19,7 @@ const ShopItemManager = () => {
   const [editingItem, setEditingItem] = useState<any>(null);
 
   // Form State
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ShopItemFormData>({
     name: '',
     itemType: 'WEAPON_GEM',
     description: '',
@@ -88,10 +97,14 @@ const ShopItemManager = () => {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const payload = {
+        ...formData,
+        price: normalizeNumberPayload(formData.price, 0),
+      };
       if (editingItem) {
-        await axiosClient.put(`/shopitems/${editingItem.shopItemId}`, formData);
+        await axiosClient.put(`/shopitems/${editingItem.shopItemId}`, payload);
       } else {
-        await axiosClient.post('/shopitems', formData);
+        await axiosClient.post('/shopitems', payload);
       }
       setModalOpen(false);
       loadData();
@@ -211,7 +224,7 @@ const ShopItemManager = () => {
                 </div>
                 <div className="col-span-2">
                   <label className="block text-sm font-medium text-gray-400 mb-1 font-sans">Giá bán</label>
-                  <input required type="number" value={formData.price} onChange={e => setFormData({...formData, price: parseInt(e.target.value) || 0})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-[#7C3AED] focus:ring-1 focus:ring-[#7C3AED]/50 transition-all font-sans" />
+                  <input required type="number" value={formData.price ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, price: sanitizeNumberInput(e.target.value)})} className="w-full bg-[#0F0F23]/80 border border-[#4C1D95]/30 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-[#7C3AED] focus:ring-1 focus:ring-[#7C3AED]/50 transition-all font-sans" />
                 </div>
               </div>
               

@@ -1,6 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from '../components/DataTable';
 import axiosClient from '../api/axiosClient';
+import { sanitizeNumberInput, normalizeNumberPayload, handleNumberFocus } from '../utils/numberInput';
+
+interface LevelFormData {
+  stageId: number | string;
+  floorNumber: number | string;
+  difficultyMultiplier: number | string;
+  baseRoomCount: number | string;
+  coopExtraRooms: number | string;
+  coopMobHPMultiplier: number | string;
+  coopBossHPMultiplier: number | string;
+  coopExtraMobsPerRoom: number | string;
+  chestRoomCount: number | string;
+  coopExtraChestRooms: number | string;
+}
 
 const LevelManager = () => {
   const [data, setData] = useState([]);
@@ -8,7 +22,7 @@ const LevelManager = () => {
   const [editingItem, setEditingItem] = useState<any>(null);
   
   // Trạng thái Form: Đồng bộ với cấu hình LevelConfig và Co-op Scaling trong Database
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<LevelFormData>({
     stageId: 1,
     floorNumber: 1,
     difficultyMultiplier: 1.0,
@@ -92,10 +106,23 @@ const LevelManager = () => {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const payload = {
+        ...formData,
+        stageId: normalizeNumberPayload(formData.stageId, 1),
+        floorNumber: normalizeNumberPayload(formData.floorNumber, 1),
+        difficultyMultiplier: normalizeNumberPayload(formData.difficultyMultiplier, 1.0),
+        baseRoomCount: normalizeNumberPayload(formData.baseRoomCount, 7),
+        coopExtraRooms: normalizeNumberPayload(formData.coopExtraRooms, 2),
+        coopMobHPMultiplier: normalizeNumberPayload(formData.coopMobHPMultiplier, 0.4),
+        coopBossHPMultiplier: normalizeNumberPayload(formData.coopBossHPMultiplier, 0.6),
+        coopExtraMobsPerRoom: normalizeNumberPayload(formData.coopExtraMobsPerRoom, 1),
+        chestRoomCount: normalizeNumberPayload(formData.chestRoomCount, 1),
+        coopExtraChestRooms: normalizeNumberPayload(formData.coopExtraChestRooms, 0),
+      };
       if (editingItem) {
-        await axiosClient.put(`/levels/${editingItem.id}`, formData);
+        await axiosClient.put(`/levels/${editingItem.id}`, payload);
       } else {
-        await axiosClient.post('/levels', formData);
+        await axiosClient.post('/levels', payload);
       }
       setModalOpen(false);
       loadData();
@@ -126,50 +153,50 @@ const LevelManager = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">Stage ID</label>
-                  <input required type="number" value={formData.stageId} onChange={e => setFormData({...formData, stageId: parseInt(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                  <input required type="number" value={formData.stageId ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, stageId: sanitizeNumberInput(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">Floor Number</label>
-                  <input required type="number" value={formData.floorNumber} onChange={e => setFormData({...formData, floorNumber: parseInt(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                  <input required type="number" value={formData.floorNumber ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, floorNumber: sanitizeNumberInput(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Difficulty Multiplier (e.g. 1.5)</label>
-                <input required type="number" step="0.1" value={formData.difficultyMultiplier} onChange={e => setFormData({...formData, difficultyMultiplier: parseFloat(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                <input required type="number" step="0.1" value={formData.difficultyMultiplier ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, difficultyMultiplier: sanitizeNumberInput(e.target.value, true)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">Base Rooms (Solo)</label>
-                  <input required type="number" value={formData.baseRoomCount} onChange={e => setFormData({...formData, baseRoomCount: parseInt(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                  <input required type="number" value={formData.baseRoomCount ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, baseRoomCount: sanitizeNumberInput(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">Co-op +Rooms</label>
-                  <input required type="number" value={formData.coopExtraRooms} onChange={e => setFormData({...formData, coopExtraRooms: parseInt(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                  <input required type="number" value={formData.coopExtraRooms ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, coopExtraRooms: sanitizeNumberInput(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">Chest Rooms (Solo)</label>
-                  <input required type="number" value={formData.chestRoomCount} onChange={e => setFormData({...formData, chestRoomCount: parseInt(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                  <input required type="number" value={formData.chestRoomCount ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, chestRoomCount: sanitizeNumberInput(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">Co-op +Chest Rooms</label>
-                  <input required type="number" value={formData.coopExtraChestRooms} onChange={e => setFormData({...formData, coopExtraChestRooms: parseInt(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                  <input required type="number" value={formData.coopExtraChestRooms ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, coopExtraChestRooms: sanitizeNumberInput(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">Co-op Mob HP (+/P, e.g. 0.4)</label>
-                  <input required type="number" step="0.05" value={formData.coopMobHPMultiplier} onChange={e => setFormData({...formData, coopMobHPMultiplier: parseFloat(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                  <input required type="number" step="0.05" value={formData.coopMobHPMultiplier ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, coopMobHPMultiplier: sanitizeNumberInput(e.target.value, true)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">Co-op Boss HP (+/P, e.g. 0.6)</label>
-                  <input required type="number" step="0.05" value={formData.coopBossHPMultiplier} onChange={e => setFormData({...formData, coopBossHPMultiplier: parseFloat(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                  <input required type="number" step="0.05" value={formData.coopBossHPMultiplier ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, coopBossHPMultiplier: sanitizeNumberInput(e.target.value, true)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-400 mb-1">Co-op Extra Mobs/Room</label>
-                <input required type="number" value={formData.coopExtraMobsPerRoom} onChange={e => setFormData({...formData, coopExtraMobsPerRoom: parseInt(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                <input required type="number" value={formData.coopExtraMobsPerRoom ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, coopExtraMobsPerRoom: sanitizeNumberInput(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
               </div>
               <div className="flex justify-end gap-3 mt-8">
                 <button type="button" onClick={() => setModalOpen(false)} className="px-4 py-2 text-gray-400 hover:text-white transition-colors">Cancel</button>

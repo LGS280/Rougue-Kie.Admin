@@ -1,5 +1,6 @@
 import React from 'react';
 import { X } from 'lucide-react';
+import { sanitizeNumberInput, handleNumberFocus } from '../utils/numberInput';
 
 export interface FormField {
   name: string;
@@ -108,8 +109,12 @@ export function EntityModal({
                       type={field.type}
                       placeholder={field.placeholder}
                       value={formData[field.name] ?? ''}
+                      onFocus={(e) => {
+                        if (field.type === 'number') handleNumberFocus(e);
+                      }}
                       onChange={(e) => {
-                        const val = field.type === 'number' ? (e.target.value === '' ? '' : Number(e.target.value)) : e.target.value;
+                        const isFloat = field.type === 'number' && typeof field.step === 'number' && field.step < 1;
+                        const val = field.type === 'number' ? sanitizeNumberInput(e.target.value, isFloat) : e.target.value;
                         onChange(field.name, val);
                       }}
                       required={field.required}
