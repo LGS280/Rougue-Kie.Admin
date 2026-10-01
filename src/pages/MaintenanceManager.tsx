@@ -9,7 +9,7 @@ interface MaintenanceItem {
   message: string;
   startTime: string;
   endTime: string;
-  status: 'Active' | 'Completed' | 'Cancelled';
+  status: 'Scheduled' | 'Active' | 'Completed' | 'Cancelled';
   createdAt: string;
   updatedAt?: string | null;
   isCurrentlyActive: boolean;
@@ -22,6 +22,16 @@ interface CurrentStatus {
   startTime?: string | null;
   endTime?: string | null;
   remainingMinutes?: number | null;
+  hasUpcomingMaintenance?: boolean;
+  upcomingMaintenance?: {
+    id: number;
+    title: string;
+    message: string;
+    startTime: string;
+    endTime: string;
+    hoursUntilStart: number;
+    minutesUntilStart: number;
+  } | null;
 }
 
 const MaintenanceManager: React.FC = () => {
@@ -38,7 +48,7 @@ const MaintenanceManager: React.FC = () => {
     message: '',
     startTime: '',
     endTime: '',
-    status: 'Active' as 'Active' | 'Completed' | 'Cancelled'
+    status: 'Scheduled' as 'Scheduled' | 'Active' | 'Completed' | 'Cancelled'
   });
 
   // Chuyển đổi định dạng ISO UTC sang chuỗi datetime-local cho input HTML5 (YYYY-MM-DDTHH:mm)
@@ -93,19 +103,20 @@ const MaintenanceManager: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Mở modal thêm mới với giá trị mặc định là ngay bây giờ + 2 tiếng
+  // Mở modal thêm mới với giá trị mặc định bắt đầu sau 10 phút (yêu cầu ít nhất 5 phút)
   const handleAdd = () => {
     setEditingItem(null);
     setErrorMessage(null);
     const now = new Date();
-    const twoHoursLater = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+    const tenMinutesLater = new Date(now.getTime() + 10 * 60 * 1000);
+    const twoHoursLater = new Date(tenMinutesLater.getTime() + 2 * 60 * 60 * 1000);
 
     setFormData({
       title: 'Thông Báo Bảo Trì Định Kỳ',
       message: 'Máy chủ đang tạm dừng để nâng cấp hệ thống và tối ưu hóa hiệu năng Co-op. Vui lòng quay lại sau!',
-      startTime: toLocalDatetimeInput(now.toISOString()),
+      startTime: toLocalDatetimeInput(tenMinutesLater.toISOString()),
       endTime: toLocalDatetimeInput(twoHoursLater.toISOString()),
-      status: 'Active'
+      status: 'Scheduled'
     });
     setModalOpen(true);
   };
@@ -215,9 +226,17 @@ const MaintenanceManager: React.FC = () => {
       accessor: (item) => {
         if (item.status === 'Active') {
           return (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30 font-mono">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-500/15 text-rose-300 border border-rose-500/30 font-mono">
               <AlertTriangle size={13} />
               Active
+            </span>
+          );
+        }
+        if (item.status === 'Scheduled') {
+          return (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-sky-500/15 text-sky-300 border border-sky-500/30 font-mono">
+              <Clock size={13} />
+              Scheduled
             </span>
           );
         }
@@ -254,6 +273,8 @@ const MaintenanceManager: React.FC = () => {
       <div className={`glass-panel p-5 rounded-2xl border transition-all duration-300 ${
         currentStatus?.isUnderMaintenance
           ? 'bg-rose-950/30 border-rose-500/50 shadow-lg shadow-rose-950/40'
+          : currentStatus?.hasUpcomingMaintenance
+          ? 'bg-amber-950/30 border-amber-500/50 shadow-lg shadow-amber-950/30'
           : 'bg-[#161633]/60 border-[#4C1D95]/40 shadow-xl'
       }`}>
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -261,26 +282,46 @@ const MaintenanceManager: React.FC = () => {
             <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-bold shadow-md ${
               currentStatus?.isUnderMaintenance
                 ? 'bg-gradient-to-tr from-rose-600 to-amber-600 text-white animate-pulse shadow-rose-600/30'
+                : currentStatus?.hasUpcomingMaintenance
+                ? 'bg-gradient-to-tr from-amber-600 to-sky-600 text-white shadow-amber-600/20'
                 : 'bg-gradient-to-tr from-emerald-600 to-[#7C3AED] text-white shadow-emerald-600/20'
             }`}>
-              {currentStatus?.isUnderMaintenance ? <ShieldAlert size={24} /> : <Wrench size={24} />}
+              {currentStatus?.isUnderMaintenance ? (
+                <ShieldAlert size={24} />
+              ) : currentStatus?.hasUpcomingMaintenance ? (
+                <Clock size={24} />
+              ) : (
+                <Wrench size={24} />
+              )}
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-lg font-bold text-white font-mono tracking-wide">
-                  {currentStatus?.isUnderMaintenance ? 'SERVER UNDER ACTIVE MAINTENANCE' : 'SERVER OPERATIONAL STATUS'}
+                  {currentStatus?.isUnderMaintenance
+                    ? 'SERVER UNDER ACTIVE MAINTENANCE'
+                    : currentStatus?.hasUpcomingMaintenance
+                    ? 'UPCOMING MAINTENANCE SCHEDULED'
+                    : 'SERVER OPERATIONAL STATUS'}
                 </h2>
                 <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-mono font-semibold ${
                   currentStatus?.isUnderMaintenance
                     ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                    : currentStatus?.hasUpcomingMaintenance
+                    ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
                     : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
                 }`}>
-                  {currentStatus?.isUnderMaintenance ? 'MAINTENANCE IN EFFECT' : 'NORMAL OPERATIONS'}
+                  {currentStatus?.isUnderMaintenance
+                    ? 'MAINTENANCE IN EFFECT'
+                    : currentStatus?.hasUpcomingMaintenance
+                    ? `STARTS IN ~${currentStatus.upcomingMaintenance?.minutesUntilStart ?? 0}M`
+                    : 'NORMAL OPERATIONS'}
                 </span>
               </div>
               <p className="text-xs text-gray-400 mt-1 font-sans">
                 {currentStatus?.isUnderMaintenance
                   ? `${currentStatus.title} — Expected completion: ${formatDateTime(currentStatus.endTime || '')} (~${currentStatus.remainingMinutes}m remaining)`
+                  : currentStatus?.hasUpcomingMaintenance && currentStatus.upcomingMaintenance
+                  ? `${currentStatus.upcomingMaintenance.title} — Starts: ${formatDateTime(currentStatus.upcomingMaintenance.startTime)} to ${formatDateTime(currentStatus.upcomingMaintenance.endTime)}`
                   : 'All game systems, multiplayer hubs, and matchmaking services are running smoothly.'}
               </p>
             </div>
@@ -410,7 +451,8 @@ const MaintenanceManager: React.FC = () => {
                   onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
                   className="w-full bg-[#0F0F23] border border-[#4C1D95]/40 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#7C3AED] font-mono"
                 >
-                  <option value="Active">Active (Lên lịch / Kích hoạt)</option>
+                  <option value="Scheduled">Scheduled (Đã lên lịch)</option>
+                  <option value="Active">Active (Đang bảo trì)</option>
                   <option value="Completed">Completed (Đã hoàn tất)</option>
                   <option value="Cancelled">Cancelled (Hủy bỏ)</option>
                 </select>
