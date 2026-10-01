@@ -2,6 +2,16 @@ import React, { useEffect, useState } from 'react';
 import DataTable from '../components/DataTable';
 import axiosClient from '../api/axiosClient';
 import { useAuth } from '../context/AuthContext';
+import { sanitizeNumberInput, normalizeNumberPayload, handleNumberFocus } from '../utils/numberInput';
+
+interface BulletFormData {
+  bulletName: string;
+  damage: number | string;
+  critRate: number | string;
+  flightSpeed: number | string;
+  piercingCount: number | string;
+  prefabName: string;
+}
 
 const BulletManager = () => {
   const { isAuthenticated, role } = useAuth();
@@ -12,7 +22,7 @@ const BulletManager = () => {
   const [editingItem, setEditingItem] = useState<any>(null);
   
   // Form State
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<BulletFormData>({
     bulletName: '',
     damage: 10,
     critRate: 0.1,
@@ -80,10 +90,17 @@ const BulletManager = () => {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const payload = {
+        ...formData,
+        damage: normalizeNumberPayload(formData.damage, 10),
+        critRate: normalizeNumberPayload(formData.critRate, 0.1),
+        flightSpeed: normalizeNumberPayload(formData.flightSpeed, 10.0),
+        piercingCount: normalizeNumberPayload(formData.piercingCount, 1),
+      };
       if (editingItem) {
-        await axiosClient.put(`/bullets/${editingItem.id}`, formData);
+        await axiosClient.put(`/bullets/${editingItem.id}`, payload);
       } else {
-        await axiosClient.post('/bullets', formData);
+        await axiosClient.post('/bullets', payload);
       }
       setModalOpen(false);
       loadData();
@@ -118,19 +135,19 @@ const BulletManager = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">Damage</label>
-                  <input required type="number" value={formData.damage} onChange={e => setFormData({...formData, damage: parseInt(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                  <input required type="number" value={formData.damage ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, damage: sanitizeNumberInput(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">Crit Rate (0.0-1.0)</label>
-                  <input required type="number" step="0.01" value={formData.critRate} onChange={e => setFormData({...formData, critRate: parseFloat(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                  <input required type="number" step="0.01" value={formData.critRate ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, critRate: sanitizeNumberInput(e.target.value, true)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">Flight Speed</label>
-                  <input required type="number" step="0.1" value={formData.flightSpeed} onChange={e => setFormData({...formData, flightSpeed: parseFloat(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                  <input required type="number" step="0.1" value={formData.flightSpeed ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, flightSpeed: sanitizeNumberInput(e.target.value, true)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">Piercing Count</label>
-                  <input required type="number" value={formData.piercingCount} onChange={e => setFormData({...formData, piercingCount: parseInt(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
+                  <input required type="number" value={formData.piercingCount ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, piercingCount: sanitizeNumberInput(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
                 </div>
               </div>
               <div>

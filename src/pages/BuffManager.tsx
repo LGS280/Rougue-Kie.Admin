@@ -1,13 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from '../components/DataTable';
 import axiosClient from '../api/axiosClient';
+import { sanitizeNumberInput, normalizeNumberPayload, handleNumberFocus } from '../utils/numberInput';
+
+interface BuffFormData {
+  buffName: string;
+  description: string;
+  iconPath: string;
+  buffType: string;
+  value: number | string;
+  rarity: string;
+}
 
 const BuffManager = () => {
   const [data, setData] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<any>(null);
   
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<BuffFormData>({
     buffName: '',
     description: '',
     iconPath: '',
@@ -73,11 +83,15 @@ const BuffManager = () => {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const payload = {
+        ...formData,
+        value: normalizeNumberPayload(formData.value, 10),
+      };
       if (editingItem) {
         // Cập nhật Buff: Chỉ truyền formData mà không gửi id trong body để khớp với API mới
-        await axiosClient.put(`/buffs/${editingItem.id}`, formData);
+        await axiosClient.put(`/buffs/${editingItem.id}`, payload);
       } else {
-        await axiosClient.post('/buffs', formData);
+        await axiosClient.post('/buffs', payload);
       }
       setModalOpen(false);
       loadData();
@@ -128,7 +142,7 @@ const BuffManager = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-1">Value</label>
-                  <input required type="number" step="0.1" value={formData.value} onChange={e => setFormData({...formData, value: parseFloat(e.target.value)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-yellow-500" />
+                  <input required type="number" step="0.1" value={formData.value ?? ''} onFocus={handleNumberFocus} onChange={e => setFormData({...formData, value: sanitizeNumberInput(e.target.value, true)})} className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-yellow-500" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
