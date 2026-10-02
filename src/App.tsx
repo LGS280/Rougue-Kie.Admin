@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AdminLayout from './layout/AdminLayout';
 import Dashboard from './pages/Dashboard';
 import EnemyManager from './pages/EnemyManager';
@@ -14,6 +14,7 @@ import MaintenanceManager from './pages/MaintenanceManager';
 import Analytics from './pages/Analytics';
 import Login from './pages/Login';
 import Unauthorized from './pages/Unauthorized';
+import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './context/AuthContext';
 
@@ -47,8 +48,8 @@ function App() {
             </Route>
           </Route>
 
-          {/* Fallback route cho bất kỳ đường dẫn không xác định nào */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {/* Fallback route hiển thị trang 404 cho bất kỳ đường dẫn không xác định nào */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
